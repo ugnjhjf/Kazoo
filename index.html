@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#1a0a2e" />
+  <meta name="description" content="KazooTherapy — A rhythm game for Dysphagia oral muscle training using your voice." />
+  <title>KazooTherapy — Oral Muscle Training</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ═══════════════════════════════ SCREEN: HOME ═══════════════════════════════ -->
+<div id="screen-home" class="screen active">
+  <div class="home-bg">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+  </div>
+  <div class="home-content">
+    <div class="home-logo">
+      <div class="logo-icon">🎵</div>
+      <h1 class="logo-title">KazooTherapy</h1>
+      <p class="logo-sub">Oral Muscle Training · Rhythm Game</p>
+    </div>
+    <div class="home-stats-bar" id="home-stats">
+      <div class="stat-chip">
+        <span class="stat-icon">🔥</span>
+        <span id="home-streak">0</span>
+        <span class="stat-label">Day Streak</span>
+      </div>
+      <div class="stat-chip">
+        <span class="stat-icon">⏱</span>
+        <span id="home-totaltime">0m</span>
+        <span class="stat-label">Total Time</span>
+      </div>
+      <div class="stat-chip">
+        <span class="stat-icon">🏅</span>
+        <span id="home-badges">0/6</span>
+        <span class="stat-label">Badges</span>
+      </div>
+    </div>
+    <div class="home-buttons">
+      <button id="btn-start-game" class="btn btn-primary btn-xl pulse-glow" onclick="nav('tutorial')">
+        <span class="btn-icon">🎤</span> Start Training
+      </button>
+      <div class="home-secondary-buttons">
+        <button class="btn btn-glass" onclick="nav('calendar')">
+          <span>📅</span> Calendar
+        </button>
+        <button class="btn btn-glass" onclick="nav('report')">
+          <span>📊</span> Report
+        </button>
+        <button class="btn btn-glass" onclick="nav('badges')">
+          <span>🏆</span> Badges
+        </button>
+        <button class="btn btn-glass" onclick="nav('settings')">
+          <span>⚙️</span> Settings
+        </button>
+      </div>
+    </div>
+    <p class="home-footer">Hold phone upright · Hum into microphone</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SCREEN: TUTORIAL ═══════════════════════════ -->
+<div id="screen-tutorial" class="screen">
+  <div class="screen-header">
+    <button class="btn-back" onclick="nav('home')">‹</button>
+    <h2>How to Play</h2>
+    <div></div>
+  </div>
+  <div class="tutorial-content">
+    <div class="tutorial-slides" id="tutorial-slides">
+      <div class="tutorial-slide active" data-slide="0">
+        <div class="tutorial-anim" id="tut-anim-0">
+          <div class="tut-phone-icon">📱</div>
+          <div class="tut-arrow-down">↕</div>
+        </div>
+        <h3>Hold Your Phone Upright</h3>
+        <p>Keep your phone vertical, microphone facing up toward your mouth at about 15–20cm distance.</p>
+      </div>
+      <div class="tutorial-slide" data-slide="1">
+        <div class="tutorial-anim" id="tut-anim-1">
+          <div class="tut-wave-row">
+            <div class="tut-wave"></div><div class="tut-wave"></div><div class="tut-wave"></div>
+            <div class="tut-wave"></div><div class="tut-wave"></div>
+          </div>
+        </div>
+        <h3>Hum Like a Kazoo</h3>
+        <p>Close your lips and hum steadily through your nose — like humming "mmmmm". This activates your oral and jaw muscles.</p>
+      </div>
+      <div class="tutorial-slide" data-slide="2">
+        <div class="tutorial-anim" id="tut-anim-2">
+          <div class="tut-note-demo">
+            <div class="tut-note falling"></div>
+            <div class="tut-target-zone">TARGET</div>
+          </div>
+        </div>
+        <h3>Match the Falling Notes</h3>
+        <p>Notes fall from the top. When a note reaches the <strong>Target Zone</strong>, hum steadily to score. Keep your pitch stable for bonus accuracy!</p>
+      </div>
+      <div class="tutorial-slide" data-slide="3">
+        <div class="tutorial-anim" id="tut-anim-3">
+          <div class="tut-thermo-demo">
+            <div class="tut-thermo-bar">
+              <div class="tut-thermo-fill animated"></div>
+              <div class="tut-thermo-icon">🎵</div>
+            </div>
+            <div class="tut-thermo-labels">
+              <span>Stable!</span>
+              <span>Erratic</span>
+            </div>
+          </div>
+        </div>
+        <h3>Watch Your Stability</h3>
+        <p>The <strong>Stability Thermometer</strong> shows how steady your hum is. Aim for the green zone — consistent muscle control = better rehabilitation!</p>
+      </div>
+      <div class="tutorial-slide" data-slide="4">
+        <div class="tutorial-anim" id="tut-anim-4">
+          <div class="tut-badges-row">
+            <div class="tut-badge unlocked">🌟</div>
+            <div class="tut-badge">🔒</div>
+            <div class="tut-badge">🔒</div>
+          </div>
+          <div class="tut-calendar-mini">
+            <div class="tut-cal-day active">M</div>
+            <div class="tut-cal-day">T</div>
+            <div class="tut-cal-day">W</div>
+          </div>
+        </div>
+        <h3>Build Your Streak</h3>
+        <p>Train for ≥20 minutes to complete a session. Earn badges on Day 1, 2, 3, 7, 14, and 21. Check your weekly report to see your progress!</p>
+      </div>
+    </div>
+    <div class="tutorial-dots" id="tutorial-dots">
+      <span class="dot active" onclick="goSlide(0)"></span>
+      <span class="dot" onclick="goSlide(1)"></span>
+      <span class="dot" onclick="goSlide(2)"></span>
+      <span class="dot" onclick="goSlide(3)"></span>
+      <span class="dot" onclick="goSlide(4)"></span>
+    </div>
+    <div class="tutorial-nav-buttons">
+      <button id="btn-tut-prev" class="btn btn-glass" onclick="tutPrev()" style="visibility:hidden">← Back</button>
+      <button id="btn-tut-next" class="btn btn-primary" onclick="tutNext()">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SCREEN: GAME ════════════════════════════════ -->
+<div id="screen-game" class="screen">
+  <div class="game-top-bar">
+    <button class="btn-back-sm" onclick="stopGame()" id="btn-game-quit">✕</button>
+    <div class="game-top-center">
+      <div class="session-timer" id="session-timer">00:00</div>
+      <div class="session-label">SESSION TIME</div>
+    </div>
+    <div class="game-accuracy-chip">
+      <span id="game-accuracy-val">--%</span>
+      <span class="chip-label">Accuracy</span>
+    </div>
+  </div>
+
+  <!-- Mic permission notice -->
+  <div id="mic-permission-notice" class="mic-notice">
+    <div class="mic-notice-card">
+      <div class="mic-icon-big">🎤</div>
+      <h3>Microphone Access Required</h3>
+      <p>KazooTherapy needs your microphone to detect your humming. Tap below to grant access.</p>
+      <button id="btn-grant-mic" class="btn btn-primary" onclick="requestMic()">Allow Microphone</button>
+    </div>
+  </div>
+
+  <!-- Main game area -->
+  <div id="game-main" class="game-main hidden">
+    <div class="game-lane-area">
+      <!-- Stability Thermometer -->
+      <div class="thermometer-container">
+        <div class="thermo-label top">STABLE</div>
+        <div class="thermometer" id="thermometer">
+          <div class="thermo-fill" id="thermo-fill"></div>
+          <div class="thermo-indicator" id="thermo-indicator">🎵</div>
+        </div>
+        <div class="thermo-label bottom">ERRATIC</div>
+      </div>
+
+      <!-- Note Lane -->
+      <div class="note-lane-wrapper">
+        <div class="pitch-sidebar">
+          <div class="pitch-label" style="top:8%">HIGH</div>
+          <div class="pitch-label" style="top:50%">MID</div>
+          <div class="pitch-label" style="bottom:8%">LOW</div>
+        </div>
+        <div class="note-lane" id="note-lane">
+          <div class="target-zone" id="target-zone">
+            <div class="target-zone-line"></div>
+            <div class="target-zone-glow"></div>
+          </div>
+          <!-- Notes are inserted here by JS -->
+        </div>
+        <!-- Live pitch indicator -->
+        <div class="pitch-indicator" id="pitch-indicator">
+          <div class="pitch-dot" id="pitch-dot"></div>
+          <div class="pitch-ring" id="pitch-ring"></div>
+        </div>
+      </div>
+
+      <!-- Right panel -->
+      <div class="game-right-panel">
+        <div class="game-combo-badge" id="combo-badge">
+          <span id="combo-count">0</span>
+          <span class="combo-label">COMBO</span>
+        </div>
+        <div class="game-hz-display">
+          <span id="hz-display">--</span>
+          <span class="hz-label">Hz</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feedback toast -->
+    <div class="feedback-toast" id="feedback-toast"></div>
+
+    <!-- Bottom controls -->
+    <div class="game-bottom">
+      <div class="game-song-info">
+        <span id="game-song-name">Warm-Up Session</span>
+        <div class="song-progress-bar">
+          <div class="song-progress-fill" id="song-progress-fill"></div>
+        </div>
+      </div>
+      <div class="game-mini-stats">
+        <div class="mini-stat">
+          <span id="game-hits">0</span>
+          <span class="mini-stat-label">Hits</span>
+        </div>
+        <div class="mini-stat">
+          <span id="game-misses">0</span>
+          <span class="mini-stat-label">Misses</span>
+        </div>
+        <div class="mini-stat">
+          <span id="game-notes-left">0</span>
+          <span class="mini-stat-label">Left</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pause overlay -->
+  <div id="pause-overlay" class="pause-overlay hidden">
+    <div class="pause-card">
+      <h2>Paused</h2>
+      <p>Session time: <strong id="pause-time">00:00</strong></p>
+      <button class="btn btn-primary" onclick="resumeGame()">▶ Resume</button>
+      <button class="btn btn-glass" onclick="stopGame()">✕ Quit Session</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SCREEN: RESULTS ═══════════════════════════ -->
+<div id="screen-results" class="screen">
+  <div class="results-bg">
+    <div class="orb orb1"></div><div class="orb orb2"></div>
+  </div>
+  <div class="results-content">
+    <div class="results-header">
+      <div class="results-icon" id="results-icon">🎉</div>
+      <h2 id="results-title">Session Complete!</h2>
+      <p class="results-sub" id="results-sub">Great work on your oral training!</p>
+    </div>
+
+    <div class="results-cards">
+      <div class="result-card">
+        <div class="result-card-icon">🎯</div>
+        <div class="result-card-value" id="res-accuracy">--%</div>
+        <div class="result-card-label">Accuracy</div>
+        <div class="result-card-bar"><div class="result-bar-fill" id="res-acc-bar"></div></div>
+      </div>
+      <div class="result-card">
+        <div class="result-card-icon">🌡️</div>
+        <div class="result-card-value" id="res-stability">--</div>
+        <div class="result-card-label">Stability</div>
+        <div class="result-bar-label" id="res-stability-label">—</div>
+      </div>
+      <div class="result-card">
+        <div class="result-card-icon">⏱</div>
+        <div class="result-card-value" id="res-time">0:00</div>
+        <div class="result-card-label">Time Trained</div>
+      </div>
+      <div class="result-card">
+        <div class="result-card-icon">🎵</div>
+        <div class="result-card-value" id="res-notes">0/0</div>
+        <div class="result-card-label">Notes Hit</div>
+      </div>
+    </div>
+
+    <!-- Badge unlock -->
+    <div class="badge-unlock-area" id="badge-unlock-area" style="display:none">
+      <h3>🏆 Badge Unlocked!</h3>
+      <div class="unlocked-badge-display" id="unlocked-badge-display"></div>
+    </div>
+
+    <!-- Session calendar note -->
+    <div class="results-calendar-note" id="results-cal-note">
+      <span class="cal-note-icon">📅</span>
+      <span id="results-cal-text">Today marked on your calendar!</span>
+    </div>
+
+    <div class="results-actions">
+      <button class="btn btn-primary" onclick="nav('game')">🔄 Play Again</button>
+      <button class="btn btn-glass" onclick="nav('calendar')">📅 Calendar</button>
+      <button class="btn btn-glass" onclick="nav('home')">🏠 Home</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SCREEN: CALENDAR ══════════════════════════ -->
+<div id="screen-calendar" class="screen">
+  <div class="screen-header">
+    <button class="btn-back" onclick="nav('home')">‹</button>
+    <h2>Training Calendar</h2>
+    <button class="btn-icon-sm" onclick="nav('report')">📊</button>
+  </div>
+  <div class="calendar-content">
+    <div class="streak-banner" id="streak-banner">
+      <span class="streak-fire">🔥</span>
+      <div>
+        <div class="streak-num" id="cal-streak-num">0</div>
+        <div class="streak-text">Day Streak</div>
+      </div>
+      <div class="streak-total">
+        <div class="streak-num" id="cal-total-days">0</div>
+        <div class="streak-text">Total Days</div>
+      </div>
+    </div>
+
+    <div class="calendar-nav">
+      <button class="cal-nav-btn" onclick="calPrevMonth()">‹</button>
+      <h3 id="cal-month-label">March 2026</h3>
+      <button class="cal-nav-btn" onclick="calNextMonth()">›</button>
+    </div>
+
+    <div class="calendar-grid-header">
+      <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span>
+      <span>Thu</span><span>Fri</span><span>Sat</span>
+    </div>
+    <div class="calendar-grid" id="calendar-grid"></div>
+
+    <!-- Milestone progress bar -->
+    <div class="milestone-section">
+      <h3>Milestone Progress</h3>
+      <div class="milestone-bar">
+        <div class="milestone-fill" id="milestone-fill"></div>
+        <div class="milestone-markers">
+          <div class="mile-marker" style="left:4.76%" data-day="1" id="mile-1">D1</div>
+          <div class="mile-marker" style="left:9.52%" data-day="2" id="mile-2">D2</div>
+          <div class="mile-marker" style="left:14.28%" data-day="3" id="mile-3">D3</div>
+          <div class="mile-marker" style="left:33.33%" data-day="7" id="mile-7">D7</div>
+          <div class="mile-marker" style="left:66.66%" data-day="14" id="mile-14">D14</div>
+          <div class="mile-marker" style="left:100%" data-day="21" id="mile-21">D21</div>
+        </div>
+      </div>
+      <div class="milestone-badges-row" id="milestone-badges-row">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SCREEN: BADGES ════════════════════════════ -->
+<div id="screen-badges" class="screen">
+  <div class="screen-header">
+    <button class="btn-back" onclick="nav('home')">‹</button>
+    <h2>Achievements</h2>
+    <div></div>
+  </div>
+  <div class="badges-content">
+    <div class="badges-summary">
+      <span id="badges-count">0</span> / 6 Badges Unlocked
+    </div>
+    <div class="badge-grid" id="badge-grid">
+      <!-- Populated by JS -->
+    </div>
+    <div class="extra-achievements" id="extra-achievements">
+      <h3>Accuracy Awards</h3>
+      <div class="award-grid" id="award-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SCREEN: REPORT ════════════════════════════ -->
+<div id="screen-report" class="screen">
+  <div class="screen-header">
+    <button class="btn-back" onclick="nav('home')">‹</button>
+    <h2>Weekly Report</h2>
+    <div></div>
+  </div>
+  <div class="report-content">
+    <div class="report-period" id="report-period">Mar 13 – Mar 19, 2026</div>
+
+    <div class="report-summary-cards">
+      <div class="report-card">
+        <div class="report-card-icon">📆</div>
+        <div class="report-card-val" id="rpt-days">0</div>
+        <div class="report-card-lbl">Days Trained</div>
+      </div>
+      <div class="report-card">
+        <div class="report-card-icon">⏱</div>
+        <div class="report-card-val" id="rpt-time">0m</div>
+        <div class="report-card-lbl">Total Time</div>
+      </div>
+      <div class="report-card">
+        <div class="report-card-icon">🎯</div>
+        <div class="report-card-val" id="rpt-acc">--%</div>
+        <div class="report-card-lbl">Avg Accuracy</div>
+      </div>
+      <div class="report-card">
+        <div class="report-card-icon">🌡️</div>
+        <div class="report-card-val" id="rpt-stab">--</div>
+        <div class="report-card-lbl">Avg Stability</div>
+      </div>
+    </div>
+
+    <h3 class="chart-title">Daily Training Time (min)</h3>
+    <div class="bar-chart" id="bar-chart">
+      <!-- Populated by JS -->
+    </div>
+
+    <h3 class="chart-title">Frequency Level</h3>
+    <div class="frequency-level-display">
+      <div class="freq-level-badge" id="freq-level-badge">F1</div>
+      <div class="freq-level-desc" id="freq-level-desc">Keep training to level up!</div>
+    </div>
+    <div class="freq-level-bar">
+      <div class="freq-level-steps">
+        <div class="freq-step active" id="freq-f1">F1</div>
+        <div class="freq-step" id="freq-f2">F2</div>
+        <div class="freq-step" id="freq-f3">F3</div>
+        <div class="freq-step" id="freq-f4">F4</div>
+        <div class="freq-step" id="freq-f5">F5</div>
+      </div>
+    </div>
+
+    <h3 class="chart-title">Accuracy Trend</h3>
+    <div class="accuracy-trend" id="accuracy-trend">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SCREEN: SETTINGS ══════════════════════════ -->
+<div id="screen-settings" class="screen">
+  <div class="screen-header">
+    <button class="btn-back" onclick="nav('home')">‹</button>
+    <h2>Settings</h2>
+    <div></div>
+  </div>
+  <div class="settings-content">
+
+    <div class="settings-section">
+      <h3>Microphone Test</h3>
+      <div class="mic-test-area">
+        <div class="mic-test-visual">
+          <div class="mic-test-bar-group" id="mic-test-bars">
+            <div class="mic-bar"></div><div class="mic-bar"></div><div class="mic-bar"></div>
+            <div class="mic-bar"></div><div class="mic-bar"></div><div class="mic-bar"></div>
+            <div class="mic-bar"></div>
+          </div>
+        </div>
+        <button id="btn-mic-test" class="btn btn-glass" onclick="toggleMicTest()">🎤 Test Mic</button>
+        <div class="mic-test-hz" id="mic-test-hz">-- Hz</div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <h3>Pitch Tolerance</h3>
+      <p class="settings-desc">How forgiving the pitch detection is. Higher = easier.</p>
+      <div class="slider-row">
+        <span>Strict</span>
+        <input type="range" id="pitch-tolerance-slider" min="20" max="100" step="10" value="50" oninput="updateTolerance(this.value)" />
+        <span>Relaxed</span>
+      </div>
+      <div class="slider-val">Tolerance: <strong id="tolerance-val">±50 Hz</strong></div>
+    </div>
+
+    <div class="settings-section">
+      <h3>Game Speed</h3>
+      <div class="speed-options">
+        <button class="speed-btn active" data-speed="slow" onclick="setSpeed(this)">🐢 Slow</button>
+        <button class="speed-btn" data-speed="normal" onclick="setSpeed(this)">🎵 Normal</button>
+        <button class="speed-btn" data-speed="fast" onclick="setSpeed(this)">⚡ Fast</button>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <h3>Song / Pattern</h3>
+      <div class="song-select" id="song-select">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <div class="settings-section danger-section">
+      <h3>Data Management</h3>
+      <button class="btn btn-danger" onclick="confirmClearData()">🗑 Clear All Data</button>
+      <p class="settings-desc">This will erase all your sessions, badges, and calendar progress.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ GLOBAL OVERLAYS ════════════════════════════ -->
+
+<!-- Badge unlocked full-screen flash -->
+<div id="global-badge-flash" class="badge-flash hidden">
+  <div class="badge-flash-content">
+    <div class="badge-flash-icon" id="flash-badge-icon">🏆</div>
+    <h2>Badge Unlocked!</h2>
+    <div class="badge-flash-name" id="flash-badge-name">Day 1 Champion</div>
+    <p id="flash-badge-desc">You completed your first training session!</p>
+    <button class="btn btn-primary" onclick="closeBadgeFlash()">Awesome! 🎉</button>
+  </div>
+</div>
+
+<!-- Confirm dialog -->
+<div id="confirm-dialog" class="confirm-overlay hidden">
+  <div class="confirm-card">
+    <h3 id="confirm-title">Are you sure?</h3>
+    <p id="confirm-msg">This action cannot be undone.</p>
+    <div class="confirm-buttons">
+      <button class="btn btn-glass" id="confirm-cancel" onclick="closeConfirm()">Cancel</button>
+      <button class="btn btn-danger" id="confirm-ok">Yes, Delete</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
