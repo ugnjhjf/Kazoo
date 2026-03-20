@@ -88,7 +88,7 @@ function rnd(a, b) { return a + Math.random() * (b - a); }
 const App = {
   currentScreen: 'home',
   settings: {
-    tolerance: 50,
+    tolerance: 80,
     speed: 'normal',
     selectedSong: 'warmup',
   },
@@ -127,6 +127,7 @@ const App = {
     active: false,
     testActive: false,
     testAnimFrame: null,
+    pitchBuffer: [],      // rolling buffer of recent valid hz readings for smoothing
   },
   calendarState: {
     year: 0,
@@ -299,10 +300,24 @@ async function requestMic() {
   }
 }
 
+// detectPitch: returns a smoothed pitch using a rolling median of recent valid readings.
+// This prevents single-frame dropouts from causing missed notes.
 function detectPitch() {
   if (!App.mic.analyser) return -1;
   App.mic.analyser.getFloatTimeDomainData(App.mic.dataArray);
-  return autoCorrelate(App.mic.dataArray, App.mic.audioCtx.sampleRate);
+  const raw = autoCorrelate(App.mic.dataArray, App.mic.audioCtx.sampleRate);
+
+  const buf = App.mic.pitchBuffer;
+  if (raw > 80 && raw < 800) {
+    buf.push(raw);
+    if (buf.length > 5) buf.shift(); // keep last 5 valid readings
+  }
+
+  if (buf.length === 0) return -1;
+
+  // Return median of buffer to smooth out noise spikes
+  const sorted = [...buf].sort((a, b) => a - b);
+  return sorted[Math.floor(sorted.length / 2)];
 }
 
 function autoCorrelate(buffer, sampleRate) {
@@ -310,10 +325,10 @@ function autoCorrelate(buffer, sampleRate) {
   let rms = 0;
   for (let i = 0; i < SIZE; i++) rms += buffer[i] * buffer[i];
   rms = Math.sqrt(rms / SIZE);
-  if (rms < 0.01) return -1; // too quiet
+  if (rms < 0.006) return -1; // lower threshold: detect softer hums
 
   let r1 = 0, r2 = SIZE - 1;
-  const threshold = 0.2;
+  const threshold = 0.12; // lower clipping threshold for softer signals
   for (let i = 0; i < SIZE / 2; i++) {
     if (Math.abs(buffer[i]) < threshold) { r1 = i; break; }
   }
@@ -335,6 +350,11 @@ function autoCorrelate(buffer, sampleRate) {
   for (let i = d; i < buf2.length; i++) {
     if (c[i] > maxVal) { maxVal = c[i]; maxPos = i; }
   }
+
+  // Noise filter: require the autocorrelation peak to be at least 35% of the
+  // zero-lag energy. Random/environmental noise has a flat autocorrelation and
+  // will fail this check; a periodic hum will have a clear peak.
+  if (!c[0] || maxVal / c[0] < 0.35) return -1;
 
   let T0 = maxPos;
   const x1 = c[T0-1], x2 = c[T0], x3 = c[T0+1];
@@ -379,6 +399,7 @@ function startGameLoop() {
   G.noteDomElements = new Map();
   G.accuracyHistory = [];
   G.stabilityScores = [];
+  App.mic.pitchBuffer = []; // clear smoothing buffer for new session
 
   // Load song
   const songDef = SONGS.find(s => s.id === App.settings.selectedSong) || SONGS[0];
@@ -437,10 +458,16 @@ function gameFrame(timestamp) {
   const targetTop = targetBottom + 60; // target zone top (60px tall)
 
   // --- Detect pitch ---
-  const hz = detectPitch();
-  if (hz > 60 && hz < 1200) {
-    G.pitchHistory.push(hz);
-    if (G.pitchHistory.length > 120) G.pitchHistory.shift();
+  const hz = detectPitch();           // smoothed — used for hit detection
+  const rawHz = autoCorrelate(App.mic.dataArray, App.mic.audioCtx.sampleRate); // raw — used for stability
+
+  // Update pitchHistory with raw readings (including silence=0) so stability
+  // reflects actual humming consistency, not the smoothed output.
+  const histVal = (rawHz > 80 && rawHz < 800) ? rawHz : 0;
+  G.pitchHistory.push(histVal);
+  if (G.pitchHistory.length > 120) G.pitchHistory.shift();
+
+  if (hz > 80 && hz < 800) {
     setText('hz-display', Math.round(hz));
 
     // Move pitch dot
@@ -450,6 +477,8 @@ function gameFrame(timestamp) {
     const dotY = laneH * (1 - normHz);
     pitchDot.style.top = `${dotY}px`;
     pitchRing.style.top = `${dotY - 9}px`;
+  } else {
+    setText('hz-display', '--');
   }
 
   // --- Update stability thermometer ---
@@ -483,13 +512,13 @@ function gameFrame(timestamp) {
       // Check if note is in target zone
       const noteBottom = note.yPos + 40;
       const noteTop = note.yPos;
-      const inZone = noteBottom >= targetLineY - 30 && noteTop <= targetLineY + 30;
+      const inZone = noteBottom >= targetLineY - 60 && noteTop <= targetLineY + 60;
 
       if (inZone) {
         note.totalWindowFrames++;
         G.totalTargetFrames++;
 
-        if (hz > 60 && isOnPitch(hz, note.pitch)) {
+        if (isOnPitch(hz, note.pitch)) {
           note.hitFrames++;
           G.hitFrames++;
           G.combo++;
@@ -509,7 +538,7 @@ function gameFrame(timestamp) {
           ? note.hitFrames / note.totalWindowFrames
           : 0;
 
-        if (accuracy >= 0.4) {
+        if (accuracy >= 0.25) {
           G.hits++;
           noteEffect(G.noteDomElements.get(note), 'hit');
           showFeedbackToast(accuracy >= 0.9 ? '🎵 Perfect!' : accuracy >= 0.7 ? '✅ Good!' : '👍 OK');
@@ -542,10 +571,10 @@ function gameFrame(timestamp) {
   G.animFrame = requestAnimationFrame(gameFrame);
 }
 
+// Judgment range: any detected hum within the valid human humming range (80–800 Hz) is accepted.
+// The note's specific pitch (LOW/MID/HIGH) is no longer required to match.
 function isOnPitch(hz, notePitch) {
-  const targets = { low: 200, mid: 320, high: 450 };
-  const t = targets[notePitch] || 320;
-  return Math.abs(hz - t) <= App.settings.tolerance;
+  return hz > 80 && hz < 800;
 }
 
 function calcStability(history) {
