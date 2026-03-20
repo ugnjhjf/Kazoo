@@ -117,6 +117,7 @@ const App = {
     noteDomElements: new Map(),
     accuracyHistory: [],
     stabilityScores: [],
+    hzWaveHistory: [],        // ring buffer of hz values for waveform display
   },
   mic: {
     stream: null,
@@ -399,6 +400,7 @@ function startGameLoop() {
   G.noteDomElements = new Map();
   G.accuracyHistory = [];
   G.stabilityScores = [];
+  G.hzWaveHistory = [];
   App.mic.pitchBuffer = []; // clear smoothing buffer for new session
 
   // Load song
@@ -481,9 +483,10 @@ function gameFrame(timestamp) {
     setText('hz-display', '--');
   }
 
-  // --- Update stability thermometer ---
+  // --- Update stability thermometer + waveform ---
   const stability = calcStability(G.pitchHistory);
   updateThermometer(stability);
+  drawHzWave(hz);
 
   // --- Update notes ---
   G.notes.forEach(note => {
@@ -592,6 +595,98 @@ function updateThermometer(stabilityPct) {
   const indicator = document.getElementById('thermo-indicator');
   fill.style.height = `${stabilityPct}%`;
   indicator.style.bottom = `${stabilityPct}%`;
+}
+
+/* Draw a scrolling Hz line chart onto the right-panel canvas.
+   Valid hum → coloured line; silence → gap at bottom. */
+function drawHzWave(hz) {
+  const canvas = document.getElementById('hz-wave-canvas');
+  if (!canvas) return;
+
+  // Sync canvas resolution to its CSS display size
+  const W = canvas.offsetWidth  || 64;
+  const H = canvas.offsetHeight || 160;
+  if (canvas.width !== W)  canvas.width  = W;
+  if (canvas.height !== H) canvas.height = H;
+
+  const G = App.game;
+  // Push current reading (0 = silence)
+  const val = (hz > 300 && hz < 800) ? hz : 0;
+  G.hzWaveHistory.push(val);
+  if (G.hzWaveHistory.length > W) G.hzWaveHistory.shift(); // one sample per pixel
+
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+
+  // Background grid line at mid-frequency (550 Hz midpoint of 300–800)
+  ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, H / 2);
+  ctx.lineTo(W, H / 2);
+  ctx.stroke();
+
+  // Map Hz → Y (300 Hz = bottom, 800 Hz = top)
+  const HZ_MIN = 300, HZ_MAX = 800;
+  const hzToY = h => H - ((h - HZ_MIN) / (HZ_MAX - HZ_MIN)) * H;
+
+  // Build gradient along the line
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0,   '#00e5c8');   // top  = high Hz = cyan
+  grad.addColorStop(0.5, '#b76cff');   // mid  = purple
+  grad.addColorStop(1,   '#ff6b9d');   // low  = pink
+
+  // Draw filled area under the curve
+  ctx.beginPath();
+  let started = false;
+  const hist = G.hzWaveHistory;
+  const startX = W - hist.length;
+
+  for (let i = 0; i < hist.length; i++) {
+    const x = startX + i;
+    if (hist[i] === 0) { started = false; continue; }
+    const y = hzToY(hist[i]);
+    if (!started) {
+      ctx.moveTo(x, H);        // anchor to bottom
+      ctx.lineTo(x, y);
+      started = true;
+    } else {
+      ctx.lineTo(x, y);
+    }
+  }
+  if (started) ctx.lineTo(startX + hist.length - 1, H); // close to bottom
+
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(0,229,200,0.12)';
+  ctx.fill();
+
+  // Draw the line itself on top
+  ctx.beginPath();
+  started = false;
+  for (let i = 0; i < hist.length; i++) {
+    const x = startX + i;
+    if (hist[i] === 0) { started = false; continue; }
+    const y = hzToY(hist[i]);
+    if (!started) { ctx.moveTo(x, y); started = true; }
+    else ctx.lineTo(x, y);
+  }
+  ctx.strokeStyle = grad;
+  ctx.lineWidth = 1.5;
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+
+  // Dot at the tip of the current reading
+  if (val > 0) {
+    const tipX = W - 1;
+    const tipY = hzToY(val);
+    ctx.beginPath();
+    ctx.arc(tipX, tipY, 3, 0, Math.PI * 2);
+    ctx.fillStyle = '#00e5c8';
+    ctx.shadowColor = '#00e5c8';
+    ctx.shadowBlur = 8;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
 }
 
 function updateGameUI(G, stability) {

@@ -550,8 +550,8 @@ body {
 
 /* Right panel */
 .game-right-panel {
-  width: 52px; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 16px; padding: 8px 4px 8px 0;
+  width: 72px; display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-start; gap: 12px; padding: 8px 4px 8px 2px;
 }
 .game-combo-badge {
   display: flex; flex-direction: column; align-items: center;
@@ -563,6 +563,22 @@ body {
 .game-hz-display { display: flex; flex-direction: column; align-items: center; }
 #hz-display { font-size: 1rem; font-weight: 800; color: var(--clr-accent); }
 .hz-label { font-size: 0.45rem; color: var(--clr-text-dim); text-transform: uppercase; }
+
+/* Hz waveform canvas */
+.hz-wave-canvas {
+  width: 64px;
+  flex: 1;
+  min-height: 100px;
+  border-radius: 10px;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(0,229,200,0.2);
+  display: block;
+}
+.hz-wave-label {
+  font-size: 0.42rem; color: var(--clr-text-dim);
+  text-transform: uppercase; letter-spacing: 0.5px;
+  padding-bottom: 4px;
+}
 
 /* Feedback toast */
 .feedback-toast {
@@ -985,7 +1001,7 @@ body {
 .song-option-info .song-opt-name { font-size: 0.9rem; font-weight: 700; }
 .song-option-info .song-opt-desc { font-size: 0.7rem; color: var(--clr-text-dim); }
 
-.danger-section { }
+
 
 /* ════════════════════════════════════════════════
    GLOBAL OVERLAYS
