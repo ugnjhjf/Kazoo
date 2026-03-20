@@ -308,7 +308,7 @@ function detectPitch() {
   const raw = autoCorrelate(App.mic.dataArray, App.mic.audioCtx.sampleRate);
 
   const buf = App.mic.pitchBuffer;
-  if (raw > 80 && raw < 800) {
+  if (raw > 300 && raw < 800) {
     buf.push(raw);
     if (buf.length > 5) buf.shift(); // keep last 5 valid readings
   }
@@ -463,11 +463,11 @@ function gameFrame(timestamp) {
 
   // Update pitchHistory with raw readings (including silence=0) so stability
   // reflects actual humming consistency, not the smoothed output.
-  const histVal = (rawHz > 80 && rawHz < 800) ? rawHz : 0;
+  const histVal = (rawHz > 300 && rawHz < 800) ? rawHz : 0;
   G.pitchHistory.push(histVal);
   if (G.pitchHistory.length > 120) G.pitchHistory.shift();
 
-  if (hz > 80 && hz < 800) {
+  if (hz > 300 && hz < 800) {
     setText('hz-display', Math.round(hz));
 
     // Move pitch dot
@@ -571,10 +571,10 @@ function gameFrame(timestamp) {
   G.animFrame = requestAnimationFrame(gameFrame);
 }
 
-// Judgment range: any detected hum within the valid human humming range (80–800 Hz) is accepted.
+// Judgment range: any detected hum within the valid human humming range (300–800 Hz) is accepted.
 // The note's specific pitch (LOW/MID/HIGH) is no longer required to match.
 function isOnPitch(hz, notePitch) {
-  return hz > 80 && hz < 800;
+  return hz > 300 && hz < 800;
 }
 
 function calcStability(history) {
