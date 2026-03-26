@@ -475,11 +475,20 @@ function gameFrame(timestamp) {
   if (hz > 60 && hz < 1200) {
     setText('hz-display', Math.round(hz));
 
-    // Move pitch dot
+    // Move pitch dot based on calibration range
     const pitchDot = document.getElementById('pitch-dot');
     const pitchRing = document.getElementById('pitch-ring');
-    const normHz = Math.max(0, Math.min(1, hz / 200));
-    const dotY = laneH * (1 - normHz);
+    const cLow = App.settings.calibration.low || 200;
+    const cHigh = App.settings.calibration.high || 450;
+    
+    let yPct = 0.75;
+    if (cHigh > cLow) {
+      yPct = 0.75 - 0.5 * ((hz - cLow) / (cHigh - cLow));
+    }
+    // Clamp to [0.1, 0.9] to keep the dot visible in the lane
+    yPct = Math.max(0.1, Math.min(0.9, yPct));
+    
+    const dotY = laneH * yPct;
     pitchDot.style.top = `${dotY}px`;
     pitchRing.style.top = `${dotY - 9}px`;
   } else {
@@ -627,8 +636,10 @@ function drawHzWave(hz) {
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, W, H);
 
-  // Map Hz → Y 
-  const HZ_MIN = 0, HZ_MAX = 200;
+  // Map Hz → Y using calibration values bounds
+  const cLow = App.settings.calibration.low || 200;
+  const cHigh = App.settings.calibration.high || 450;
+  const HZ_MIN = Math.max(0, cLow - 150), HZ_MAX = cHigh + 150;
   const hzToY = h => H - ((h - HZ_MIN) / (HZ_MAX - HZ_MIN)) * H;
 
   // Background grid lines (Scale marks)
@@ -636,7 +647,7 @@ function drawHzWave(hz) {
   ctx.fillStyle = 'rgba(0,0,0,0.5)';
   ctx.font = '8px sans-serif';
   ctx.lineWidth = 1;
-  [50, 100, 150].forEach(mark => {
+  [Math.round(cLow), Math.round((cLow+cHigh)/2), Math.round(cHigh)].forEach(mark => {
     const y = hzToY(mark);
     ctx.beginPath();
     ctx.moveTo(0, y);
