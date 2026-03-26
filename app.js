@@ -88,9 +88,10 @@ function rnd(a, b) { return a + Math.random() * (b - a); }
 const App = {
   currentScreen: 'home',
   settings: {
-    tolerance: 80,
+    tolerance: 15,
     speed: 'normal',
     selectedSong: 'warmup',
+    calibration: { low: 200, mid: 320, high: 450 },
   },
   game: {
     active: false,
@@ -213,6 +214,7 @@ const DB = {
 function nav(screenId) {
   // Stop mic test if navigating away from settings
   if (App.currentScreen === 'settings' && App.mic.testActive) stopMicTest();
+  if (App.currentScreen === 'calibration') stopCalibration();
 
   // Hide all screens
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -230,6 +232,7 @@ function nav(screenId) {
     case 'badges':   initBadges();   break;
     case 'report':   initReport();   break;
     case 'settings': initSettings(); break;
+    case 'calibration': startCalibration(); break;
   }
   // Scroll to top
   el.scrollTop = 0;
@@ -309,7 +312,7 @@ function detectPitch() {
   const raw = autoCorrelate(App.mic.dataArray, App.mic.audioCtx.sampleRate);
 
   const buf = App.mic.pitchBuffer;
-  if (raw > 300 && raw < 800) {
+  if (raw > 60 && raw < 1200) {
     buf.push(raw);
     if (buf.length > 5) buf.shift(); // keep last 5 valid readings
   }
@@ -465,17 +468,17 @@ function gameFrame(timestamp) {
 
   // Update pitchHistory with raw readings (including silence=0) so stability
   // reflects actual humming consistency, not the smoothed output.
-  const histVal = (rawHz > 300 && rawHz < 800) ? rawHz : 0;
+  const histVal = (rawHz > 60 && rawHz < 1200) ? rawHz : 0;
   G.pitchHistory.push(histVal);
   if (G.pitchHistory.length > 120) G.pitchHistory.shift();
 
-  if (hz > 300 && hz < 800) {
+  if (hz > 60 && hz < 1200) {
     setText('hz-display', Math.round(hz));
 
     // Move pitch dot
     const pitchDot = document.getElementById('pitch-dot');
     const pitchRing = document.getElementById('pitch-ring');
-    const normHz = Math.max(0, Math.min(1, (hz - 100) / 600));
+    const normHz = Math.max(0, Math.min(1, hz / 200));
     const dotY = laneH * (1 - normHz);
     pitchDot.style.top = `${dotY}px`;
     pitchRing.style.top = `${dotY - 9}px`;
@@ -520,6 +523,7 @@ function gameFrame(timestamp) {
       if (inZone) {
         note.totalWindowFrames++;
         G.totalTargetFrames++;
+        G.stabilityScores.push(stability);
 
         if (isOnPitch(hz, note.pitch)) {
           note.hitFrames++;
@@ -574,14 +578,19 @@ function gameFrame(timestamp) {
   G.animFrame = requestAnimationFrame(gameFrame);
 }
 
-// Judgment range: any detected hum within the valid human humming range (300–800 Hz) is accepted.
-// The note's specific pitch (LOW/MID/HIGH) is no longer required to match.
+// Judgment range utilizes the explicit calibration settings + the global tolerance.
 function isOnPitch(hz, notePitch) {
-  return hz > 300 && hz < 800;
+  if (hz < 0) return false;
+  const targetHz = App.settings.calibration[notePitch] || PITCH_ZONES[notePitch].hz;
+  return Math.abs(hz - targetHz) <= App.settings.tolerance;
 }
 
 function calcStability(history) {
   if (history.length < 4) return 0;
+
+  const validCount = history.filter(v => v > 0).length;
+  if (validCount === 0) return 0;
+
   const mean = history.reduce((a, v) => a + v, 0) / history.length;
   const variance = history.reduce((a, v) => a + Math.pow(v - mean, 2), 0) / history.length;
   const stdDev = Math.sqrt(variance);
@@ -611,24 +620,31 @@ function drawHzWave(hz) {
 
   const G = App.game;
   // Push current reading (0 = silence)
-  const val = (hz > 300 && hz < 800) ? hz : 0;
+  const val = (hz > 60 && hz < 1200) ? hz : 0;
   G.hzWaveHistory.push(val);
   if (G.hzWaveHistory.length > W) G.hzWaveHistory.shift(); // one sample per pixel
 
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, W, H);
 
-  // Background grid line at mid-frequency (550 Hz midpoint of 300–800)
-  ctx.strokeStyle = 'rgba(255,255,255,0.05)';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(0, H / 2);
-  ctx.lineTo(W, H / 2);
-  ctx.stroke();
-
-  // Map Hz → Y (300 Hz = bottom, 800 Hz = top)
-  const HZ_MIN = 300, HZ_MAX = 800;
+  // Map Hz → Y 
+  const HZ_MIN = 0, HZ_MAX = 200;
   const hzToY = h => H - ((h - HZ_MIN) / (HZ_MAX - HZ_MIN)) * H;
+
+  // Background grid lines (Scale marks)
+  ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+  ctx.fillStyle = 'rgba(0,0,0,0.5)';
+  ctx.font = '8px sans-serif';
+  ctx.lineWidth = 1;
+  [50, 100, 150].forEach(mark => {
+    const y = hzToY(mark);
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(W, y);
+    ctx.stroke();
+    // Fill text slightly above the line
+    ctx.fillText(mark, 2, y - 2);
+  });
 
   // Build gradient along the line
   const grad = ctx.createLinearGradient(0, 0, 0, H);
@@ -750,7 +766,10 @@ function endGame(finalStability) {
     ? Math.round((G.hitFrames / G.totalTargetFrames) * 100)
     : 0;
 
-  const stabilityPct = Math.round(finalStability);
+  const avgStability = G.stabilityScores.length
+    ? G.stabilityScores.reduce((a, b) => a + b, 0) / G.stabilityScores.length
+    : 0;
+  const stabilityPct = Math.round(avgStability);
   const durationS = G.sessionPlaySeconds;
 
   // Save session
@@ -1061,8 +1080,8 @@ function initReport() {
    ══════════════════════════════════ */
 function initSettings() {
   const el = document.getElementById('pitch-tolerance-slider');
-  el.value = App.settings.tolerance;
-  setText('tolerance-val', `±${App.settings.tolerance} Hz`);
+  el.value = App.settings.tolerance || 15;
+  setText('tolerance-val', `±${App.settings.tolerance || 15} Hz`);
 
   // Speed buttons
   document.querySelectorAll('.speed-btn').forEach(btn => {
@@ -1158,7 +1177,104 @@ function micTestLoop() {
 }
 
 /* ══════════════════════════════════
-   14. BADGE FLASH
+   14. CALIBRATION
+   ══════════════════════════════════ */
+let calibStep = 0; // 0 = low, 1 = mid, 2 = high
+const CALIB_STEPS = [
+  { id: 'low', title: 'Low Note', desc: 'Hum a low, deep pitch.' },
+  { id: 'mid', title: 'Mid Note', desc: 'Hum a comfortable, medium pitch.' },
+  { id: 'high', title: 'High Note', desc: 'Hum a high, steady pitch.' }
+];
+
+async function startCalibration() {
+  if (!App.mic.active) {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+      App.mic.stream = stream;
+      App.mic.audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 44100 });
+      const source = App.mic.audioCtx.createMediaStreamSource(stream);
+      App.mic.analyser = App.mic.audioCtx.createAnalyser();
+      App.mic.analyser.fftSize = 2048;
+      App.mic.bufferLength = App.mic.analyser.fftSize;
+      App.mic.dataArray = new Float32Array(App.mic.bufferLength);
+      source.connect(App.mic.analyser);
+      App.mic.active = true;
+    } catch { 
+      showToast('Mic access denied.', 3000);
+      return; 
+    }
+  }
+
+  calibStep = 0;
+  updateCalibrationUI();
+  App.mic.testActive = true;
+  calibrationLoop();
+}
+
+function stopCalibration() {
+  App.mic.testActive = false;
+  if (App.mic.testAnimFrame) cancelAnimationFrame(App.mic.testAnimFrame);
+}
+
+function updateCalibrationUI() {
+  if (calibStep < 3) {
+    const step = CALIB_STEPS[calibStep];
+    setText('calib-step-title', step.title);
+    setText('calib-step-desc', step.desc);
+    setText('btn-calib-record', `Record ${step.title.split(' ')[0]}`);
+    document.getElementById('btn-calib-record').classList.remove('btn-success');
+    document.getElementById('btn-calib-record').classList.add('btn-primary');
+  } else {
+    setText('calib-step-title', 'Calibration Complete!');
+    setText('calib-step-desc', 'Your kazoo pitches have been saved.');
+    setText('btn-calib-record', 'Back to Settings');
+    document.getElementById('btn-calib-record').classList.remove('btn-primary');
+    document.getElementById('btn-calib-record').classList.add('btn-success'); // Assuming a success class exists or uses primary
+  }
+
+  setText('calib-val-low', App.settings.calibration.low);
+  setText('calib-val-mid', App.settings.calibration.mid);
+  setText('calib-val-high', App.settings.calibration.high);
+}
+
+function recordCalibrationStep() {
+  if (calibStep >= 3) {
+    const data = DB.load();
+    data.settings = App.settings;
+    DB.save(data);
+    nav('settings');
+    return;
+  }
+
+  const hzDisplay = document.getElementById('calib-live-hz').textContent;
+  const hz = parseInt(hzDisplay);
+  if (isNaN(hz) || hz < 60) {
+    showToast("Couldn't hear a steady pitch, please try again.");
+    return;
+  }
+
+  const stepKey = CALIB_STEPS[calibStep].id;
+  App.settings.calibration[stepKey] = hz;
+  
+  calibStep++;
+  updateCalibrationUI();
+  
+  if (calibStep >= 3) {
+    showToast("All pitches configured successfully!");
+  }
+}
+
+function calibrationLoop() {
+  if (!App.mic.testActive || App.currentScreen !== 'calibration') return;
+  const hz = detectPitch();
+  if (hz > 60 && hz < 1200) setText('calib-live-hz', Math.round(hz));
+  else setText('calib-live-hz', '--');
+
+  App.mic.testAnimFrame = requestAnimationFrame(calibrationLoop);
+}
+
+/* ══════════════════════════════════
+   15. BADGE FLASH
    ══════════════════════════════════ */
 function showBadgeFlash(badge) {
   setText('flash-badge-icon', badge.icon);
@@ -1172,7 +1288,7 @@ function closeBadgeFlash() {
 }
 
 /* ══════════════════════════════════
-   15. CONFIRM DIALOG
+   16. CONFIRM DIALOG
    ══════════════════════════════════ */
 function confirmClearData() {
   const dlg = document.getElementById('confirm-dialog');
@@ -1192,7 +1308,7 @@ function closeConfirm() {
 }
 
 /* ══════════════════════════════════
-   16. UTILITY FUNCTIONS
+   17. UTILITY FUNCTIONS
    ══════════════════════════════════ */
 function setText(id, val) {
   const el = document.getElementById(id);
@@ -1226,7 +1342,7 @@ function showToast(msg, duration = 2000) {
 }
 
 /* ══════════════════════════════════
-   17. BOOT
+   18. BOOT
    ══════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
   // Init home on load
@@ -1239,6 +1355,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const data = DB.load();
   if (data.settings) {
     Object.assign(App.settings, data.settings);
+    if (!App.settings.tolerance || App.settings.tolerance > 50) App.settings.tolerance = 15;
   }
 
   // Re-generate song patterns (they're random, which is fine for a training game)

@@ -153,6 +153,44 @@
   </div>
 </div>
 
+<!-- ═══════════════════════════════ SCREEN: CALIBRATION ════════════════════════ -->
+<div id="screen-calibration" class="screen">
+  <div class="screen-header">
+    <button class="btn-back" onclick="nav('settings')">‹</button>
+    <h2>Kazoo Calibration</h2>
+    <div></div>
+  </div>
+  <div class="calibration-content" style="padding: 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 20px;">
+    <p style="font-size: 1rem; color: var(--clr-text-dim);">Hum the target note steadily into the microphone, then press the Record button.</p>
+    
+    <div style="width: 100%; max-width: 320px; background: #ffffff; border: 2px solid var(--clr-border); border-radius: 20px; padding: 24px; box-shadow: 0 8px 24px rgba(138,61,224,0.06);">
+      <h3 id="calib-step-title" style="font-size: 2rem; color: var(--clr-primary); margin-bottom: 12px;">Low Note</h3>
+      <p id="calib-step-desc" style="font-size: 0.9rem; color: var(--clr-text-dim); margin-bottom: 24px;">Hum a low, deep pitch.</p>
+      
+      <div style="font-size: 3rem; font-weight: 800; color: var(--clr-accent); margin-bottom: 24px;">
+        <span id="calib-live-hz">--</span><span style="font-size: 1rem; color: var(--clr-text-dim);"> Hz</span>
+      </div>
+      
+      <button id="btn-calib-record" class="btn btn-primary btn-xl" onclick="recordCalibrationStep()">Record Pitch</button>
+    </div>
+    
+    <div style="display: flex; justify-content: space-around; width: 100%; max-width: 320px; margin-top: 16px;">
+      <div style="text-align: center;">
+        <div style="font-size: 0.8rem; color: var(--clr-text-dim);">LOW</div>
+        <div id="calib-val-low" style="font-size: 1.2rem; font-weight: bold;">--</div>
+      </div>
+      <div style="text-align: center;">
+        <div style="font-size: 0.8rem; color: var(--clr-text-dim);">MID</div>
+        <div id="calib-val-mid" style="font-size: 1.2rem; font-weight: bold;">--</div>
+      </div>
+      <div style="text-align: center;">
+        <div style="font-size: 0.8rem; color: var(--clr-text-dim);">HIGH</div>
+        <div id="calib-val-high" style="font-size: 1.2rem; font-weight: bold;">--</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ═══════════════════════════════ SCREEN: GAME ════════════════════════════════ -->
 <div id="screen-game" class="screen">
   <div class="game-top-bar">
@@ -482,14 +520,20 @@
     </div>
 
     <div class="settings-section">
+      <h3>Kazoo Calibration</h3>
+      <p class="settings-desc">Calibrate your Low, Mid, and High kazoo pitches for accurate game scoring.</p>
+      <button class="btn btn-primary" onclick="nav('calibration'); initCalibration();" style="margin-top: 8px;">⚙️ Calibrate Pitches</button>
+    </div>
+
+    <div class="settings-section">
       <h3>Pitch Tolerance</h3>
       <p class="settings-desc">How forgiving the pitch detection is. Higher = easier.</p>
       <div class="slider-row">
         <span>Strict</span>
-        <input type="range" id="pitch-tolerance-slider" min="20" max="200" step="10" value="80" oninput="updateTolerance(this.value)" />
+        <input type="range" id="pitch-tolerance-slider" min="5" max="50" step="5" value="15" oninput="updateTolerance(this.value)" />
         <span>Relaxed</span>
       </div>
-      <div class="slider-val">Tolerance: <strong id="tolerance-val">±80 Hz</strong></div>
+      <div class="slider-val">Tolerance: <strong id="tolerance-val">±15 Hz</strong></div>
     </div>
 
     <div class="settings-section">
