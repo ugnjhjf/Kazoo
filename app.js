@@ -636,18 +636,21 @@ function drawHzWave(hz) {
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, W, H);
 
-  // Map Hz → Y using calibration values bounds
-  const cLow = App.settings.calibration.low || 200;
+  // Map Hz → Y using calibration values.
+  // Set range so LOW / MID / HIGH each occupy exactly 1/3 of the canvas.
+  const cLow  = App.settings.calibration.low  || 200;
   const cHigh = App.settings.calibration.high || 450;
-  const HZ_MIN = Math.max(0, cLow - 150), HZ_MAX = cHigh + 150;
+  const span  = cHigh - cLow;                 // distance between Low and High
+  const HZ_MIN = cLow  - span;                // below LOW (bottom third)
+  const HZ_MAX = cHigh + span;                // above HIGH (top third)
   const hzToY = h => H - ((h - HZ_MIN) / (HZ_MAX - HZ_MIN)) * H;
 
-  // Background grid lines (Scale marks)
+  // Background grid lines at LOW, MID, HIGH (equal thirds)
   ctx.strokeStyle = 'rgba(0,0,0,0.1)';
   ctx.fillStyle = 'rgba(0,0,0,0.5)';
   ctx.font = '8px sans-serif';
   ctx.lineWidth = 1;
-  [Math.round(cLow), Math.round((cLow+cHigh)/2), Math.round(cHigh)].forEach(mark => {
+  [Math.round(cLow), Math.round((cLow + cHigh) / 2), Math.round(cHigh)].forEach(mark => {
     const y = hzToY(mark);
     ctx.beginPath();
     ctx.moveTo(0, y);
@@ -656,6 +659,31 @@ function drawHzWave(hz) {
     // Fill text slightly above the line
     ctx.fillText(mark, 2, y - 2);
   });
+
+  // ── Red limit lines at (cHigh + tolerance) and (cLow − tolerance) ──
+  const tol = App.settings.tolerance || 15;
+  const yUpperLimit = hzToY(cHigh + tol);
+  const yLowerLimit = hzToY(cLow  - tol);
+
+  ctx.save();
+  ctx.strokeStyle = 'rgba(220,30,30,0.85)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([4, 3]);
+
+  // Upper limit line (cHigh + tolerance)
+  ctx.beginPath();
+  ctx.moveTo(0, yUpperLimit);
+  ctx.lineTo(W, yUpperLimit);
+  ctx.stroke();
+
+  // Lower limit line (cLow - tolerance)
+  ctx.beginPath();
+  ctx.moveTo(0, yLowerLimit);
+  ctx.lineTo(W, yLowerLimit);
+  ctx.stroke();
+
+  ctx.setLineDash([]);
+  ctx.restore();
 
   // Build gradient along the line
   const grad = ctx.createLinearGradient(0, 0, 0, H);
@@ -715,6 +743,7 @@ function drawHzWave(hz) {
     ctx.shadowBlur = 0;
   }
 }
+
 
 function updateGameUI(G, stability) {
   const accuracy = G.totalTargetFrames > 0
