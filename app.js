@@ -59,6 +59,386 @@ const PITCH_ZONES = {
 
 const SPEED_PX_PER_SEC = { slow: 100, normal: 150, fast: 210 };
 
+/* ══════════════════════════════════
+   i18n TRANSLATIONS
+   ══════════════════════════════════ */
+const LANG = {
+  en: {
+    /* Home */
+    'logo-sub': 'Oral Muscle Training · Rhythm Game',
+    'home-streak-lbl': 'Day Streak',
+    'home-totaltime-lbl': 'Total Time',
+    'home-badges-lbl': 'Badges',
+    'btn-start': 'Start Training',
+    'btn-calendar': 'Calendar',
+    'btn-report': 'Report',
+    'btn-badges': 'Badges',
+    'btn-settings': 'Settings',
+    'home-footer': 'Hold phone upright · Hum into microphone',
+    /* Tutorial */
+    'tut-header': 'How to Play',
+    'tut0-title': 'Hold Your Phone Upright',
+    'tut0-desc': 'Keep your phone vertical, microphone facing up toward your mouth at about 15–20cm distance.',
+    'tut1-title': 'Hum Like a Kazoo',
+    'tut1-desc': 'Close your lips and hum steadily through your nose — like humming "mmmmm". This activates your oral and jaw muscles.',
+    'tut2-title': 'Match the Falling Notes',
+    'tut2-desc': 'Notes fall from the top. When a note reaches the Target Zone, hum steadily to score. Keep your pitch stable for bonus accuracy!',
+    'tut-target': 'TARGET',
+    'tut3-title': 'Watch Your Stability',
+    'tut3-desc': 'The Stability Thermometer shows how steady your hum is. Aim for the green zone — consistent muscle control = better rehabilitation!',
+    'tut-stable': 'Stable!',
+    'tut-erratic': 'Erratic',
+    'tut4-title': 'Build Your Streak',
+    'tut4-desc': 'Train for ≥20 minutes to complete a session. Earn badges on Day 1, 2, 3, 7, 14, and 21. Check your weekly report to see your progress!',
+    'btn-tut-prev': '← Back',
+    'btn-tut-next': 'Next →',
+    /* Calibration */
+    'calib-header': 'Kazoo Calibration',
+    'calib-desc': 'Hum the target note steadily into the microphone, then press the Record button.',
+    'calib-lbl-low': 'LOW',
+    'calib-lbl-mid': 'MID',
+    'calib-lbl-high': 'HIGH',
+    'btn-calib-record': 'Record Pitch',
+    /* Calibration dynamic */
+    'calib-step-low-title': 'Low Note',
+    'calib-step-low-desc': 'Hum a low, deep pitch.',
+    'calib-step-mid-title': 'Mid Note',
+    'calib-step-mid-desc': 'Hum a comfortable, medium pitch.',
+    'calib-step-high-title': 'High Note',
+    'calib-step-high-desc': 'Hum a high, steady pitch.',
+    'calib-done-title': 'Calibration Complete!',
+    'calib-done-desc': 'Your kazoo pitches have been saved.',
+    'calib-btn-low': 'Record Low',
+    'calib-btn-mid': 'Record Mid',
+    'calib-btn-high': 'Record High',
+    'calib-btn-done': 'Back to Settings',
+    'calib-err-pitch': "Couldn't hear a steady pitch, please try again.",
+    'calib-success': 'All pitches configured successfully!',
+    'calib-mic-denied': 'Mic access denied.',
+    /* Game */
+    'session-lbl': 'SESSION TIME',
+    'chip-acc-lbl': 'Accuracy',
+    'mic-h3': 'Microphone Access Required',
+    'mic-desc': 'KazooTherapy needs your microphone to detect your humming. Tap below to grant access.',
+    'btn-grant-mic': 'Allow Microphone',
+    'thermo-lbl-stable': 'STABLE',
+    'thermo-lbl-erratic': 'ERRATIC',
+    'combo-lbl': 'COMBO',
+    'mini-lbl-hits': 'Hits',
+    'mini-lbl-misses': 'Misses',
+    'mini-lbl-left': 'Left',
+    'pause-title': 'Paused',
+    'pause-time-lbl': 'Session time:',
+    'btn-resume': '▶ Resume',
+    'btn-quit': '✕ Quit Session',
+    /* Feedback toasts */
+    'toast-perfect': '🎵 Perfect!',
+    'toast-good': '✅ Good!',
+    'toast-ok': '👍 OK',
+    'toast-missed': '❌ Missed',
+    'toast-skipped': '⚠️ Skipped',
+    'toast-mic-denied': 'Mic access denied. Please allow microphone use.',
+    'toast-data-cleared': 'All data cleared! 🗑️',
+    'toast-hum-test': 'Hum to test…',
+    /* Results */
+    'res-acc-lbl': 'Accuracy',
+    'res-stab-lbl': 'Stability',
+    'res-time-lbl': 'Time Trained',
+    'res-notes-lbl': 'Notes Hit',
+    'badge-unlock-h3': '🏆 Badge Unlocked!',
+    'btn-play-again': '🔄 Play Again',
+    'btn-res-calendar': '📅 Calendar',
+    'btn-res-home': '🏠 Home',
+    /* Results dynamic */
+    'results-sub': 'Great work on your oral training!',
+    'results-cal-prefix': '📅',
+    'results-cal-suffix': 'logged on your calendar!',
+    'results-stab-super': 'Super Stable 🟢',
+    'results-stab-good': 'Good 🟡',
+    'results-stab-fair': 'Fair 🟠',
+    'results-stab-erratic': 'Erratic 🔴',
+    'results-title-excellent': 'Excellent!',
+    'results-title-great': 'Great Job!',
+    'results-title-keep': 'Keep Going!',
+    'results-title-effort': 'Good Effort!',
+    /* Calendar */
+    'cal-header': 'Training Calendar',
+    'cal-streak-lbl': 'Day Streak',
+    'cal-total-lbl': 'Total Days',
+    'cal-sun': 'Sun', 'cal-mon': 'Mon', 'cal-tue': 'Tue', 'cal-wed': 'Wed',
+    'cal-thu': 'Thu', 'cal-fri': 'Fri', 'cal-sat': 'Sat',
+    'cal-day-labels': ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+    'mile-header': 'Milestone Progress',
+    /* Badges */
+    'badges-header': 'Achievements',
+    'badges-unlocked-lbl': 'Badges Unlocked',
+    'awards-header': 'Accuracy Awards',
+    /* Months */
+    'months-long': ['January','February','March','April','May','June','July','August','September','October','November','December'],
+    'months-short': ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+    /* Report */
+    'report-header': 'Weekly Report',
+    'rpt-days-lbl': 'Days Trained',
+    'rpt-time-lbl': 'Total Time',
+    'rpt-acc-lbl': 'Avg Accuracy',
+    'rpt-stab-lbl': 'Avg Stability',
+    'chart-title-time': 'Daily Training Time (min)',
+    'chart-title-freq': 'Frequency Level',
+    'chart-title-trend': 'Accuracy Trend',
+    'freq-descs': {
+      1: 'Getting started! Train more days to level up.',
+      2: 'F2 — Building a habit! 7 days to reach F3.',
+      3: 'F3 — Halfway to mastery! Keep it up.',
+      4: 'F4 — Advanced trainer! Just 7 more days for F5.',
+      5: 'F5 — Master-level consistency! 🏆',
+    },
+    /* Settings */
+    'settings-header': 'Settings',
+    'set-mic-title': 'Microphone Test',
+    'btn-mic-test': '🎤 Test Mic',
+    'btn-mic-stop': '⏹ Stop Test',
+    'set-calib-title': 'Kazoo Calibration',
+    'set-calib-desc': 'Calibrate your Low, Mid, and High kazoo pitches for accurate game scoring.',
+    'btn-calib-pitches': '⚙️ Calibrate Pitches',
+    'set-tol-title': 'Pitch Tolerance',
+    'set-tol-desc': 'How forgiving the pitch detection is. Higher = easier.',
+    'tol-strict': 'Strict',
+    'tol-relaxed': 'Relaxed',
+    'tol-prefix': 'Tolerance:',
+    'set-speed-title': 'Game Speed',
+    'speed-slow': '🐢 Slow',
+    'speed-normal': '🎵 Normal',
+    'speed-fast': '⚡ Fast',
+    'set-song-title': 'Song / Pattern',
+    'set-data-title': 'Data Management',
+    'btn-clear-data': '🗑 Clear All Data',
+    'set-data-desc': 'This will erase all your sessions, badges, and calendar progress.',
+    /* Confirm */
+    'confirm-clear-title': 'Clear All Data?',
+    'confirm-clear-msg': 'This will erase ALL sessions, badges, and calendar data. This cannot be undone.',
+    'btn-cancel': 'Cancel',
+    'btn-confirm-yes': 'Yes, Delete',
+    /* Badge flash */
+    'flash-badge-h2': 'Badge Unlocked!',
+    'btn-close-flash': 'Awesome! 🎉',
+    /* Songs */
+    'song-warmup-name': 'Warm-Up Session',
+    'song-warmup-desc': 'Slow, gentle notes — perfect for beginners',
+    'song-daily-name': 'Daily Trainer',
+    'song-daily-desc': 'Moderate rhythm with pitch variety',
+    'song-challenge-name': 'Power Hum',
+    'song-challenge-desc': 'Faster notes, more accuracy required',
+    /* Badges */
+    'badge-day1-name': 'First Step',      'badge-day1-desc': 'Completed your first training day!',
+    'badge-day2-name': 'Comeback',        'badge-day2-desc': 'Two days of training in the books!',
+    'badge-day3-name': 'Three Strong',    'badge-day3-desc': 'Building a streak — 3 days!',
+    'badge-day7-name': 'Week Warrior',    'badge-day7-desc': 'A full week of oral training!',
+    'badge-day14-name': 'Fortnight Force','badge-day14-desc': 'Two weeks of consistency!',
+    'badge-day21-name': 'Iron Jaw',       'badge-day21-desc': 'Ultimate 21-day challenge complete!',
+  },
+  zh: {
+    /* Home */
+    'logo-sub': '口腔肌肉訓練 · 節奏遊戲',
+    'home-streak-lbl': '連續天數',
+    'home-totaltime-lbl': '總時長',
+    'home-badges-lbl': '徽章',
+    'btn-start': '開始訓練',
+    'btn-calendar': '行事曆',
+    'btn-report': '報告',
+    'btn-badges': '徽章',
+    'btn-settings': '設定',
+    'home-footer': '手機直立 · 對麥克風哼鳴',
+    /* Tutorial */
+    'tut-header': '玩法說明',
+    'tut0-title': '直立持機',
+    'tut0-desc': '將手機垂直拿好，麥克風朝上，距離嘴巴約 15–20 公分。',
+    'tut1-title': '像卡祖笛一樣哼鳴',
+    'tut1-desc': '閉上嘴唇，用鼻腔穩定哼鳴——就像哼「嗯嗯嗯」。這能鍛鍊您的口腔與下頷肌肉。',
+    'tut2-title': '跟上下落的音符',
+    'tut2-desc': '音符從頂部落下。當音符到達目標區時，穩定哼鳴即可得分。保持音調穩定可獲得額外準確率！',
+    'tut-target': '目標',
+    'tut3-title': '關注穩定性',
+    'tut3-desc': '穩定性溫度計顯示您哼鳴的穩定程度。目標是綠色區域——肌肉控制越一致，復健效果越好！',
+    'tut-stable': '穩定！',
+    'tut-erratic': '不穩定',
+    'tut4-title': '建立連續記錄',
+    'tut4-desc': '訓練 ≥20 分鐘可完成一次訓練。在第 1、2、3、7、14 和 21 天獲得徽章。查看每週報告了解您的進度！',
+    'btn-tut-prev': '← 返回',
+    'btn-tut-next': '下一步 →',
+    /* Calibration */
+    'calib-header': '卡祖笛校準',
+    'calib-desc': '對著麥克風穩定哼出目標音，然後按下錄製按鈕。',
+    'calib-lbl-low': '低音',
+    'calib-lbl-mid': '中音',
+    'calib-lbl-high': '高音',
+    'btn-calib-record': '錄製音調',
+    /* Calibration dynamic */
+    'calib-step-low-title': '低音',
+    'calib-step-low-desc': '哼出一個低沉的音調。',
+    'calib-step-mid-title': '中音',
+    'calib-step-mid-desc': '哼出一個舒適的中間音調。',
+    'calib-step-high-title': '高音',
+    'calib-step-high-desc': '哼出一個高而穩定的音調。',
+    'calib-done-title': '校準完成！',
+    'calib-done-desc': '您的哼鳴音調已儲存。',
+    'calib-btn-low': '錄製低音',
+    'calib-btn-mid': '錄製中音',
+    'calib-btn-high': '錄製高音',
+    'calib-btn-done': '返回設定',
+    'calib-err-pitch': '未能偵測到穩定音調，請再試一次。',
+    'calib-success': '所有音調配置成功！',
+    'calib-mic-denied': '麥克風存取被拒。',
+    /* Game */
+    'session-lbl': '訓練時間',
+    'chip-acc-lbl': '準確率',
+    'mic-h3': '需要麥克風權限',
+    'mic-desc': 'KazooTherapy 需要使用您的麥克風來偵測哼鳴。請點擊下方授予權限。',
+    'btn-grant-mic': '允許麥克風',
+    'thermo-lbl-stable': '穩定',
+    'thermo-lbl-erratic': '不穩',
+    'combo-lbl': '連擊',
+    'mini-lbl-hits': '命中',
+    'mini-lbl-misses': '失誤',
+    'mini-lbl-left': '剩餘',
+    'pause-title': '已暫停',
+    'pause-time-lbl': '訓練時間：',
+    'btn-resume': '▶ 繼續',
+    'btn-quit': '✕ 退出訓練',
+    /* Feedback toasts */
+    'toast-perfect': '🎵 完美！',
+    'toast-good': '✅ 很好！',
+    'toast-ok': '👍 還行',
+    'toast-missed': '❌ 失誤',
+    'toast-skipped': '⚠️ 跳過',
+    'toast-mic-denied': '麥克風存取被拒，請允許使用麥克風。',
+    'toast-data-cleared': '所有資料已清除！🗑️',
+    'toast-hum-test': '請哼鳴以測試…',
+    /* Results */
+    'res-acc-lbl': '準確率',
+    'res-stab-lbl': '穩定性',
+    'res-time-lbl': '訓練時長',
+    'res-notes-lbl': '命中音符',
+    'badge-unlock-h3': '🏆 解鎖徽章！',
+    'btn-play-again': '🔄 再玩一次',
+    'btn-res-calendar': '📅 行事曆',
+    'btn-res-home': '🏠 主頁',
+    /* Results dynamic */
+    'results-sub': '繼續保持您的口腔訓練！',
+    'results-cal-prefix': '📅',
+    'results-cal-suffix': '已記錄在您的行事曆！',
+    'results-stab-super': '超穩定 🟢',
+    'results-stab-good': '良好 🟡',
+    'results-stab-fair': '普通 🟠',
+    'results-stab-erratic': '不穩定 🔴',
+    'results-title-excellent': '太棒了！',
+    'results-title-great': '做得好！',
+    'results-title-keep': '繼續加油！',
+    'results-title-effort': '很努力！',
+    /* Calendar */
+    'cal-header': '訓練行事曆',
+    'cal-streak-lbl': '連續天數',
+    'cal-total-lbl': '總天數',
+    'cal-sun': '日', 'cal-mon': '一', 'cal-tue': '二', 'cal-wed': '三',
+    'cal-thu': '四', 'cal-fri': '五', 'cal-sat': '六',
+    'cal-day-labels': ['日','一','二','三','四','五','六'],
+    'mile-header': '里程碑進度',
+    /* Badges */
+    'badges-header': '成就',
+    'badges-unlocked-lbl': '個徽章已解鎖',
+    'awards-header': '準確率獎項',
+    /* Months */
+    'months-long': ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'],
+    'months-short': ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
+    /* Report */
+    'report-header': '每週報告',
+    'rpt-days-lbl': '訓練天數',
+    'rpt-time-lbl': '總時長',
+    'rpt-acc-lbl': '平均準確率',
+    'rpt-stab-lbl': '平均穩定性',
+    'chart-title-time': '每日訓練時間（分鐘）',
+    'chart-title-freq': '頻率等級',
+    'chart-title-trend': '準確率趨勢',
+    'freq-descs': {
+      1: '剛剛開始！多訓練幾天以提升等級。',
+      2: 'F2 — 養成習慣！再訓練 7 天達到 F3。',
+      3: 'F3 — 邁向精通的一半！繼續加油。',
+      4: 'F4 — 進階訓練者！再 7 天即達 F5。',
+      5: 'F5 — 大師級堅持！🏆',
+    },
+    /* Settings */
+    'settings-header': '設定',
+    'set-mic-title': '麥克風測試',
+    'btn-mic-test': '🎤 測試麥克風',
+    'btn-mic-stop': '⏹ 停止測試',
+    'set-calib-title': '卡祖笛校準',
+    'set-calib-desc': '校準您的低、中、高哼鳴音調，以獲得精確的遊戲評分。',
+    'btn-calib-pitches': '⚙️ 校準音調',
+    'set-tol-title': '音調容差',
+    'set-tol-desc': '音調偵測的容許範圍。數值越高越容易。',
+    'tol-strict': '嚴格',
+    'tol-relaxed': '寬鬆',
+    'tol-prefix': '容差：',
+    'set-speed-title': '遊戲速度',
+    'speed-slow': '🐢 慢速',
+    'speed-normal': '🎵 正常',
+    'speed-fast': '⚡ 快速',
+    'set-song-title': '歌曲／模式',
+    'set-data-title': '資料管理',
+    'btn-clear-data': '🗑 清除所有資料',
+    'set-data-desc': '這將清除您所有的訓練記錄、徽章和行事曆進度。',
+    /* Confirm */
+    'confirm-clear-title': '清除所有資料？',
+    'confirm-clear-msg': '這將清除所有訓練記錄、徽章和行事曆資料，且無法撤銷。',
+    'btn-cancel': '取消',
+    'btn-confirm-yes': '是的，刪除',
+    /* Badge flash */
+    'flash-badge-h2': '解鎖徽章！',
+    'btn-close-flash': '太棒了！🎉',
+    /* Songs */
+    'song-warmup-name': '暖身訓練',
+    'song-warmup-desc': '緩慢輕柔的音符——初學者首選',
+    'song-daily-name': '每日訓練',
+    'song-daily-desc': '中等節奏，包含多種音調變化',
+    'song-challenge-name': '強力哼鳴',
+    'song-challenge-desc': '更快的音符，需要更高的準確率',
+    /* Badges */
+    'badge-day1-name': '初次踏步',    'badge-day1-desc': '完成了您的第一個訓練日！',
+    'badge-day2-name': '再接再厲',    'badge-day2-desc': '兩天訓練已完成！',
+    'badge-day3-name': '三天堅持',    'badge-day3-desc': '建立連續記錄——3天！',
+    'badge-day7-name': '週間勇士',    'badge-day7-desc': '整整一週的口腔訓練！',
+    'badge-day14-name': '兩週堅強',   'badge-day14-desc': '兩週的持續訓練！',
+    'badge-day21-name': '鐵顎挑戰',   'badge-day21-desc': '完成終極 21 天挑戰！',
+  },
+};
+
+/* i18n helpers */
+function t(key) {
+  const lang = App ? App.lang : 'en';
+  return (LANG[lang] && LANG[lang][key] !== undefined) ? LANG[lang][key] : (LANG.en[key] || key);
+}
+
+function toggleLang() {
+  setLang(App.lang === 'en' ? 'zh' : 'en');
+}
+
+function setLang(code) {
+  App.lang = code;
+  localStorage.setItem('kazoo_lang', code);
+  const btn = document.getElementById('lang-toggle');
+  if (btn) btn.textContent = code === 'en' ? '繁' : 'EN';
+  applyLang();
+}
+
+function applyLang() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const val = t(key);
+    if (typeof val === 'string') el.textContent = val;
+  });
+  // Update html lang attribute
+  document.documentElement.lang = App.lang === 'zh' ? 'zh-TW' : 'en';
+}
+
 function generatePattern(type) {
   const pitches = ['low', 'mid', 'high'];
   const notes = [];
@@ -87,6 +467,7 @@ function rnd(a, b) { return a + Math.random() * (b - a); }
    ══════════════════════════════════ */
 const App = {
   currentScreen: 'home',
+  lang: localStorage.getItem('kazoo_lang') || 'en',
   settings: {
     tolerance: 15,
     speed: 'normal',
@@ -202,7 +583,8 @@ const DB = {
       const avgAcc = daySessions.length
         ? Math.round(daySessions.reduce((a, s) => a + s.accuracy, 0) / daySessions.length)
         : null;
-      week.push({ date: d, key, mins, avgAcc, label: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()] });
+      const labels = t('cal-day-labels');
+      week.push({ date: d, key, mins, avgAcc, label: labels[d.getDay()] });
     }
     return week;
   },
@@ -557,12 +939,12 @@ function gameFrame(timestamp) {
         if (accuracy >= 0.25) {
           G.hits++;
           noteEffect(G.noteDomElements.get(note), 'hit');
-          showFeedbackToast(accuracy >= 0.9 ? '🎵 Perfect!' : accuracy >= 0.7 ? '✅ Good!' : '👍 OK');
+          showFeedbackToast(accuracy >= 0.9 ? t('toast-perfect') : accuracy >= 0.7 ? t('toast-good') : t('toast-ok'));
         } else {
           G.misses++;
           noteEffect(G.noteDomElements.get(note), 'miss');
-          if (note.totalWindowFrames > 0) showFeedbackToast('❌ Missed');
-          else showFeedbackToast('⚠️ Skipped');
+          if (note.totalWindowFrames > 0) showFeedbackToast(t('toast-missed'));
+          else showFeedbackToast(t('toast-skipped'));
         }
         note.state = 'done';
         updateGameUI(G, stability);
@@ -863,17 +1245,18 @@ function endGame(finalStability) {
 function showResults(accuracy, stability, durationS, hits, total, newBadge, dateKey) {
   // Determine emoji icon based on accuracy
   const icon = accuracy >= 90 ? '🏆' : accuracy >= 75 ? '🎉' : accuracy >= 50 ? '👍' : '💪';
-  const title = accuracy >= 90 ? 'Excellent!' : accuracy >= 75 ? 'Great Job!' : accuracy >= 50 ? 'Keep Going!' : 'Good Effort!';
+  const title = accuracy >= 90 ? t('results-title-excellent') : accuracy >= 75 ? t('results-title-great') : accuracy >= 50 ? t('results-title-keep') : t('results-title-effort');
 
   setText('results-icon', icon);
   setText('results-title', title);
 
-  const stabilityLabel = stability >= 80 ? 'Super Stable 🟢' : stability >= 60 ? 'Good 🟡' : stability >= 40 ? 'Fair 🟠' : 'Erratic 🔴';
+  const stabilityLabel = stability >= 80 ? t('results-stab-super') : stability >= 60 ? t('results-stab-good') : stability >= 40 ? t('results-stab-fair') : t('results-stab-erratic');
   setText('res-accuracy', `${accuracy}%`);
   setText('res-stability', `${stability}%`);
   setText('res-stability-label', stabilityLabel);
   setText('res-time', formatTime(durationS));
   setText('res-notes', `${hits}/${total}`);
+  setText('results-sub', t('results-sub'));
 
   // Animate accuracy bar
   setTimeout(() => {
@@ -891,8 +1274,8 @@ function showResults(accuracy, stability, durationS, hits, total, newBadge, date
   }
 
   // Calendar note
-  const calText = `📅 ${getReadableDate(dateKey)} logged on your calendar!`;
-  setText('results-cal-text', calText);
+  const readableDate = getReadableDate(dateKey);
+  setText('results-cal-text', `${t('results-cal-prefix')} ${readableDate} ${t('results-cal-suffix')}`);
 
   // Flash badge
   if (newBadge) setTimeout(() => showBadgeFlash(newBadge), 1000);
@@ -918,10 +1301,10 @@ function renderCalendar() {
   setText('cal-streak-num', streak);
   setText('cal-total-days', totalDays);
 
-  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const MONTHS = t('months-long');
   setText('cal-month-label', `${MONTHS[month]} ${year}`);
 
-  // Build grid
+  // Build grid (day labels are handled via data-i18n)
   const grid = document.getElementById('calendar-grid');
   grid.innerHTML = '';
 
@@ -1004,10 +1387,12 @@ function initBadges() {
   BADGE_DEFS.forEach(b => {
     const unlocked = !!data.badges[b.id];
     const date = data.badges[b.id] ? getReadableDate(data.badges[b.id]) : '';
+    const bName = t(`badge-${b.id}-name`);
+    const bDesc = t(`badge-${b.id}-desc`);
     grid.innerHTML += `
       <div class="badge-item ${unlocked ? 'unlocked' : ''}">
         <div class="badge-item-icon">${b.icon}</div>
-        <div class="badge-item-title">${b.name}</div>
+        <div class="badge-item-title">${bName}</div>
         <div class="badge-item-sub">Day ${b.day}</div>
         ${unlocked ? `<div class="badge-item-date">${date}</div>` : '<div class="badge-item-sub">🔒 Locked</div>'}
       </div>`;
@@ -1038,7 +1423,7 @@ function initReport() {
 
   const start = week[0].date;
   const end = week[6].date;
-  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const MONTHS = t('months-short');
   setText('report-period', `${MONTHS[start.getMonth()]} ${start.getDate()} – ${MONTHS[end.getMonth()]} ${end.getDate()}, ${end.getFullYear()}`);
 
   const daysTrained = week.filter(d => d.mins > 0).length;
@@ -1085,13 +1470,7 @@ function initReport() {
     : totalTrainedDays >= 3  ? 2
     : 1;
 
-  const freqDescs = {
-    1: 'Getting started! Train more days to level up.',
-    2: 'F2 — Building a habit! 7 days to reach F3.',
-    3: 'F3 — Halfway to mastery! Keep it up.',
-    4: 'F4 — Advanced trainer! Just 7 more days for F5.',
-    5: 'F5 — Master-level consistency! 🏆',
-  };
+  const freqDescs = t('freq-descs');
   setText('freq-level-badge', `F${freqLvl}`);
   setText('freq-level-desc', freqDescs[freqLvl]);
 
@@ -1132,12 +1511,14 @@ function initSettings() {
   const songSel = document.getElementById('song-select');
   songSel.innerHTML = '';
   SONGS.forEach(s => {
+    const sName = t(`song-${s.id}-name`);
+    const sDesc = t(`song-${s.id}-desc`);
     songSel.innerHTML += `
       <div class="song-option ${App.settings.selectedSong === s.id ? 'selected' : ''}" onclick="selectSong('${s.id}')">
         <div class="song-option-icon">${s.icon}</div>
         <div class="song-option-info">
-          <div class="song-opt-name">${s.name}</div>
-          <div class="song-opt-desc">${s.desc} · ${s.difficulty}</div>
+          <div class="song-opt-name">${sName}</div>
+          <div class="song-opt-desc">${sDesc} · ${s.difficulty}</div>
         </div>
       </div>`;
   });
@@ -1184,14 +1565,14 @@ async function startMicTest() {
   }
 
   App.mic.testActive = true;
-  setText('btn-mic-test', '⏹ Stop Test');
+  setText('btn-mic-test', t('btn-mic-stop'));
   micTestLoop();
 }
 
 function stopMicTest() {
   App.mic.testActive = false;
   if (App.mic.testAnimFrame) cancelAnimationFrame(App.mic.testAnimFrame);
-  setText('btn-mic-test', '🎤 Test Mic');
+  setText('btn-mic-test', t('btn-mic-test'));
   setText('mic-test-hz', '-- Hz');
   document.querySelectorAll('.mic-bar').forEach(b => b.style.height = '20%');
 }
@@ -1200,7 +1581,7 @@ function micTestLoop() {
   if (!App.mic.testActive) return;
   const hz = detectPitch();
   if (hz > 60 && hz < 1200) setText('mic-test-hz', `${Math.round(hz)} Hz`);
-  else setText('mic-test-hz', 'Hum to test…');
+  else setText('mic-test-hz', t('toast-hum-test'));
 
   // Animate bars with amplitude
   if (App.mic.analyser) {
@@ -1257,19 +1638,24 @@ function stopCalibration() {
 }
 
 function updateCalibrationUI() {
+  const steps = [
+    { id: 'low',  title: t('calib-step-low-title'),  desc: t('calib-step-low-desc'),  btn: t('calib-btn-low')  },
+    { id: 'mid',  title: t('calib-step-mid-title'),  desc: t('calib-step-mid-desc'),  btn: t('calib-btn-mid')  },
+    { id: 'high', title: t('calib-step-high-title'), desc: t('calib-step-high-desc'), btn: t('calib-btn-high') },
+  ];
   if (calibStep < 3) {
-    const step = CALIB_STEPS[calibStep];
+    const step = steps[calibStep];
     setText('calib-step-title', step.title);
     setText('calib-step-desc', step.desc);
-    setText('btn-calib-record', `Record ${step.title.split(' ')[0]}`);
+    setText('btn-calib-record', step.btn);
     document.getElementById('btn-calib-record').classList.remove('btn-success');
     document.getElementById('btn-calib-record').classList.add('btn-primary');
   } else {
-    setText('calib-step-title', 'Calibration Complete!');
-    setText('calib-step-desc', 'Your kazoo pitches have been saved.');
-    setText('btn-calib-record', 'Back to Settings');
+    setText('calib-step-title', t('calib-done-title'));
+    setText('calib-step-desc', t('calib-done-desc'));
+    setText('btn-calib-record', t('calib-btn-done'));
     document.getElementById('btn-calib-record').classList.remove('btn-primary');
-    document.getElementById('btn-calib-record').classList.add('btn-success'); // Assuming a success class exists or uses primary
+    document.getElementById('btn-calib-record').classList.add('btn-success');
   }
 
   setText('calib-val-low', App.settings.calibration.low);
@@ -1289,7 +1675,7 @@ function recordCalibrationStep() {
   const hzDisplay = document.getElementById('calib-live-hz').textContent;
   const hz = parseInt(hzDisplay);
   if (isNaN(hz) || hz < 60) {
-    showToast("Couldn't hear a steady pitch, please try again.");
+    showToast(t('calib-err-pitch'));
     return;
   }
 
@@ -1300,7 +1686,7 @@ function recordCalibrationStep() {
   updateCalibrationUI();
   
   if (calibStep >= 3) {
-    showToast("All pitches configured successfully!");
+    showToast(t('calib-success'));
   }
 }
 
@@ -1314,12 +1700,12 @@ function calibrationLoop() {
 }
 
 /* ══════════════════════════════════
-   15. BADGE FLASH
+   15. BADGE FLASH  (uses badge name/desc from LANG dynamically)
    ══════════════════════════════════ */
 function showBadgeFlash(badge) {
   setText('flash-badge-icon', badge.icon);
-  setText('flash-badge-name', badge.name);
-  setText('flash-badge-desc', badge.desc);
+  setText('flash-badge-name', t(`badge-${badge.id}-name`));
+  setText('flash-badge-desc', t(`badge-${badge.id}-desc`));
   document.getElementById('global-badge-flash').classList.remove('hidden');
 }
 
@@ -1333,12 +1719,12 @@ function closeBadgeFlash() {
 function confirmClearData() {
   const dlg = document.getElementById('confirm-dialog');
   dlg.classList.remove('hidden');
-  setText('confirm-title', 'Clear All Data?');
-  setText('confirm-msg', 'This will erase ALL sessions, badges, and calendar data. This cannot be undone.');
+  setText('confirm-title', t('confirm-clear-title'));
+  setText('confirm-msg', t('confirm-clear-msg'));
   document.getElementById('confirm-ok').onclick = () => {
     DB.save(DB.defaults());
     closeConfirm();
-    showToast('All data cleared! 🗑️');
+    showToast(t('toast-data-cleared'));
     initHome();
   };
 }
@@ -1367,7 +1753,7 @@ function updateTimerDisplay(seconds) {
 
 function getReadableDate(key) {
   const [y, m, d] = key.split('-').map(Number);
-  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const MONTHS = t('months-short');
   return `${MONTHS[m-1]} ${d}, ${y}`;
 }
 
@@ -1385,8 +1771,15 @@ function showToast(msg, duration = 2000) {
    18. BOOT
    ══════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
+  // Restore saved language
+  const savedLang = localStorage.getItem('kazoo_lang') || 'en';
+  App.lang = savedLang;
+  const btn = document.getElementById('lang-toggle');
+  if (btn) btn.textContent = savedLang === 'en' ? '繁' : 'EN';
+
   // Init home on load
   nav('home');
+  applyLang();
 
   // Set tutorial to first slide
   goSlide(0);

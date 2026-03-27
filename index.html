@@ -24,48 +24,53 @@
     <div class="orb orb3"></div>
   </div>
   <div class="home-content">
+    <!-- Language Toggle -->
+    <div class="lang-toggle-wrap">
+      <button id="lang-toggle" class="lang-toggle" onclick="toggleLang()">繁</button>
+    </div>
+
     <div class="home-logo">
       <div class="logo-icon">🎵</div>
       <h1 class="logo-title">KazooTherapy</h1>
-      <p class="logo-sub">Oral Muscle Training · Rhythm Game</p>
+      <p class="logo-sub" data-i18n="logo-sub">Oral Muscle Training · Rhythm Game</p>
     </div>
     <div class="home-stats-bar" id="home-stats">
       <div class="stat-chip">
         <span class="stat-icon">🔥</span>
         <span id="home-streak">0</span>
-        <span class="stat-label">Day Streak</span>
+        <span class="stat-label" data-i18n="home-streak-lbl">Day Streak</span>
       </div>
       <div class="stat-chip">
         <span class="stat-icon">⏱</span>
         <span id="home-totaltime">0m</span>
-        <span class="stat-label">Total Time</span>
+        <span class="stat-label" data-i18n="home-totaltime-lbl">Total Time</span>
       </div>
       <div class="stat-chip">
         <span class="stat-icon">🏅</span>
         <span id="home-badges">0/6</span>
-        <span class="stat-label">Badges</span>
+        <span class="stat-label" data-i18n="home-badges-lbl">Badges</span>
       </div>
     </div>
     <div class="home-buttons">
       <button id="btn-start-game" class="btn btn-primary btn-xl pulse-glow" onclick="nav('tutorial')">
-        <span class="btn-icon">🎤</span> Start Training
+        <span class="btn-icon">🎤</span><span data-i18n="btn-start">Start Training</span>
       </button>
       <div class="home-secondary-buttons">
         <button class="btn btn-glass" onclick="nav('calendar')">
-          <span>📅</span> Calendar
+          <span>📅</span><span data-i18n="btn-calendar">Calendar</span>
         </button>
         <button class="btn btn-glass" onclick="nav('report')">
-          <span>📊</span> Report
+          <span>📊</span><span data-i18n="btn-report">Report</span>
         </button>
         <button class="btn btn-glass" onclick="nav('badges')">
-          <span>🏆</span> Badges
+          <span>🏆</span><span data-i18n="btn-badges">Badges</span>
         </button>
         <button class="btn btn-glass" onclick="nav('settings')">
-          <span>⚙️</span> Settings
+          <span>⚙️</span><span data-i18n="btn-settings">Settings</span>
         </button>
       </div>
     </div>
-    <p class="home-footer">Hold phone upright · Hum into microphone</p>
+    <p class="home-footer" data-i18n="home-footer">Hold phone upright · Hum into microphone</p>
   </div>
 </div>
 
@@ -73,7 +78,7 @@
 <div id="screen-tutorial" class="screen">
   <div class="screen-header">
     <button class="btn-back" onclick="nav('home')">‹</button>
-    <h2>How to Play</h2>
+    <h2 data-i18n="tut-header">How to Play</h2>
     <div></div>
   </div>
   <div class="tutorial-content">
@@ -83,8 +88,8 @@
           <div class="tut-phone-icon">📱</div>
           <div class="tut-arrow-down">↕</div>
         </div>
-        <h3>Hold Your Phone Upright</h3>
-        <p>Keep your phone vertical, microphone facing up toward your mouth at about 15–20cm distance.</p>
+        <h3 data-i18n="tut0-title">Hold Your Phone Upright</h3>
+        <p data-i18n="tut0-desc">Keep your phone vertical, microphone facing up toward your mouth at about 15–20cm distance.</p>
       </div>
       <div class="tutorial-slide" data-slide="1">
         <div class="tutorial-anim" id="tut-anim-1">
@@ -93,18 +98,18 @@
             <div class="tut-wave"></div><div class="tut-wave"></div>
           </div>
         </div>
-        <h3>Hum Like a Kazoo</h3>
-        <p>Close your lips and hum steadily through your nose — like humming "mmmmm". This activates your oral and jaw muscles.</p>
+        <h3 data-i18n="tut1-title">Hum Like a Kazoo</h3>
+        <p data-i18n="tut1-desc">Close your lips and hum steadily through your nose — like humming "mmmmm". This activates your oral and jaw muscles.</p>
       </div>
       <div class="tutorial-slide" data-slide="2">
         <div class="tutorial-anim" id="tut-anim-2">
           <div class="tut-note-demo">
             <div class="tut-note falling"></div>
-            <div class="tut-target-zone">TARGET</div>
+            <div class="tut-target-zone" data-i18n="tut-target">TARGET</div>
           </div>
         </div>
-        <h3>Match the Falling Notes</h3>
-        <p>Notes fall from the top. When a note reaches the <strong>Target Zone</strong>, hum steadily to score. Keep your pitch stable for bonus accuracy!</p>
+        <h3 data-i18n="tut2-title">Match the Falling Notes</h3>
+        <p data-i18n="tut2-desc">Notes fall from the top. When a note reaches the <strong>Target Zone</strong>, hum steadily to score. Keep your pitch stable for bonus accuracy!</p>
       </div>
       <div class="tutorial-slide" data-slide="3">
         <div class="tutorial-anim" id="tut-anim-3">
@@ -114,13 +119,13 @@
               <div class="tut-thermo-icon">🎵</div>
             </div>
             <div class="tut-thermo-labels">
-              <span>Stable!</span>
-              <span>Erratic</span>
+              <span data-i18n="tut-stable">Stable!</span>
+              <span data-i18n="tut-erratic">Erratic</span>
             </div>
           </div>
         </div>
-        <h3>Watch Your Stability</h3>
-        <p>The <strong>Stability Thermometer</strong> shows how steady your hum is. Aim for the green zone — consistent muscle control = better rehabilitation!</p>
+        <h3 data-i18n="tut3-title">Watch Your Stability</h3>
+        <p data-i18n="tut3-desc">The <strong>Stability Thermometer</strong> shows how steady your hum is. Aim for the green zone — consistent muscle control = better rehabilitation!</p>
       </div>
       <div class="tutorial-slide" data-slide="4">
         <div class="tutorial-anim" id="tut-anim-4">
@@ -135,8 +140,8 @@
             <div class="tut-cal-day">W</div>
           </div>
         </div>
-        <h3>Build Your Streak</h3>
-        <p>Train for ≥20 minutes to complete a session. Earn badges on Day 1, 2, 3, 7, 14, and 21. Check your weekly report to see your progress!</p>
+        <h3 data-i18n="tut4-title">Build Your Streak</h3>
+        <p data-i18n="tut4-desc">Train for ≥20 minutes to complete a session. Earn badges on Day 1, 2, 3, 7, 14, and 21. Check your weekly report to see your progress!</p>
       </div>
     </div>
     <div class="tutorial-dots" id="tutorial-dots">
@@ -147,8 +152,8 @@
       <span class="dot" onclick="goSlide(4)"></span>
     </div>
     <div class="tutorial-nav-buttons">
-      <button id="btn-tut-prev" class="btn btn-glass" onclick="tutPrev()" style="visibility:hidden">← Back</button>
-      <button id="btn-tut-next" class="btn btn-primary" onclick="tutNext()">Next →</button>
+      <button id="btn-tut-prev" class="btn btn-glass" onclick="tutPrev()" style="visibility:hidden" data-i18n="btn-tut-prev">← Back</button>
+      <button id="btn-tut-next" class="btn btn-primary" onclick="tutNext()" data-i18n="btn-tut-next">Next →</button>
     </div>
   </div>
 </div>
@@ -157,11 +162,11 @@
 <div id="screen-calibration" class="screen">
   <div class="screen-header">
     <button class="btn-back" onclick="nav('settings')">‹</button>
-    <h2>Kazoo Calibration</h2>
+    <h2 data-i18n="calib-header">Kazoo Calibration</h2>
     <div></div>
   </div>
   <div class="calibration-content" style="padding: 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 20px;">
-    <p style="font-size: 1rem; color: var(--clr-text-dim);">Hum the target note steadily into the microphone, then press the Record button.</p>
+    <p data-i18n="calib-desc" style="font-size: 1rem; color: var(--clr-text-dim);">Hum the target note steadily into the microphone, then press the Record button.</p>
     
     <div style="width: 100%; max-width: 320px; background: #ffffff; border: 2px solid var(--clr-border); border-radius: 20px; padding: 24px; box-shadow: 0 8px 24px rgba(138,61,224,0.06);">
       <h3 id="calib-step-title" style="font-size: 2rem; color: var(--clr-primary); margin-bottom: 12px;">Low Note</h3>
@@ -171,20 +176,20 @@
         <span id="calib-live-hz">--</span><span style="font-size: 1rem; color: var(--clr-text-dim);"> Hz</span>
       </div>
       
-      <button id="btn-calib-record" class="btn btn-primary btn-xl" onclick="recordCalibrationStep()">Record Pitch</button>
+      <button id="btn-calib-record" class="btn btn-primary btn-xl" onclick="recordCalibrationStep()" data-i18n="btn-calib-record">Record Pitch</button>
     </div>
     
     <div style="display: flex; justify-content: space-around; width: 100%; max-width: 320px; margin-top: 16px;">
       <div style="text-align: center;">
-        <div style="font-size: 0.8rem; color: var(--clr-text-dim);">LOW</div>
+        <div data-i18n="calib-lbl-low" style="font-size: 0.8rem; color: var(--clr-text-dim);">LOW</div>
         <div id="calib-val-low" style="font-size: 1.2rem; font-weight: bold;">--</div>
       </div>
       <div style="text-align: center;">
-        <div style="font-size: 0.8rem; color: var(--clr-text-dim);">MID</div>
+        <div data-i18n="calib-lbl-mid" style="font-size: 0.8rem; color: var(--clr-text-dim);">MID</div>
         <div id="calib-val-mid" style="font-size: 1.2rem; font-weight: bold;">--</div>
       </div>
       <div style="text-align: center;">
-        <div style="font-size: 0.8rem; color: var(--clr-text-dim);">HIGH</div>
+        <div data-i18n="calib-lbl-high" style="font-size: 0.8rem; color: var(--clr-text-dim);">HIGH</div>
         <div id="calib-val-high" style="font-size: 1.2rem; font-weight: bold;">--</div>
       </div>
     </div>
@@ -197,11 +202,11 @@
     <button class="btn-back-sm" onclick="stopGame()" id="btn-game-quit">✕</button>
     <div class="game-top-center">
       <div class="session-timer" id="session-timer">00:00</div>
-      <div class="session-label">SESSION TIME</div>
+      <div class="session-label" data-i18n="session-lbl">SESSION TIME</div>
     </div>
     <div class="game-accuracy-chip">
       <span id="game-accuracy-val">--%</span>
-      <span class="chip-label">Accuracy</span>
+      <span class="chip-label" data-i18n="chip-acc-lbl">Accuracy</span>
     </div>
   </div>
 
@@ -209,9 +214,9 @@
   <div id="mic-permission-notice" class="mic-notice">
     <div class="mic-notice-card">
       <div class="mic-icon-big">🎤</div>
-      <h3>Microphone Access Required</h3>
-      <p>KazooTherapy needs your microphone to detect your humming. Tap below to grant access.</p>
-      <button id="btn-grant-mic" class="btn btn-primary" onclick="requestMic()">Allow Microphone</button>
+      <h3 data-i18n="mic-h3">Microphone Access Required</h3>
+      <p data-i18n="mic-desc">KazooTherapy needs your microphone to detect your humming. Tap below to grant access.</p>
+      <button id="btn-grant-mic" class="btn btn-primary" onclick="requestMic()" data-i18n="btn-grant-mic">Allow Microphone</button>
     </div>
   </div>
 
@@ -220,12 +225,12 @@
     <div class="game-lane-area">
       <!-- Stability Thermometer -->
       <div class="thermometer-container">
-        <div class="thermo-label top">STABLE</div>
+        <div class="thermo-label top" data-i18n="thermo-lbl-stable">STABLE</div>
         <div class="thermometer" id="thermometer">
           <div class="thermo-fill" id="thermo-fill"></div>
           <div class="thermo-indicator" id="thermo-indicator">🎵</div>
         </div>
-        <div class="thermo-label bottom">ERRATIC</div>
+        <div class="thermo-label bottom" data-i18n="thermo-lbl-erratic">ERRATIC</div>
       </div>
 
       <!-- Note Lane -->
@@ -253,7 +258,7 @@
       <div class="game-right-panel">
         <div class="game-combo-badge" id="combo-badge">
           <span id="combo-count">0</span>
-          <span class="combo-label">COMBO</span>
+          <span class="combo-label" data-i18n="combo-lbl">COMBO</span>
         </div>
         <div class="game-hz-display">
           <span id="hz-display">--</span>
@@ -279,15 +284,15 @@
       <div class="game-mini-stats">
         <div class="mini-stat">
           <span id="game-hits">0</span>
-          <span class="mini-stat-label">Hits</span>
+          <span class="mini-stat-label" data-i18n="mini-lbl-hits">Hits</span>
         </div>
         <div class="mini-stat">
           <span id="game-misses">0</span>
-          <span class="mini-stat-label">Misses</span>
+          <span class="mini-stat-label" data-i18n="mini-lbl-misses">Misses</span>
         </div>
         <div class="mini-stat">
           <span id="game-notes-left">0</span>
-          <span class="mini-stat-label">Left</span>
+          <span class="mini-stat-label" data-i18n="mini-lbl-left">Left</span>
         </div>
       </div>
     </div>
@@ -296,10 +301,10 @@
   <!-- Pause overlay -->
   <div id="pause-overlay" class="pause-overlay hidden">
     <div class="pause-card">
-      <h2>Paused</h2>
-      <p>Session time: <strong id="pause-time">00:00</strong></p>
-      <button class="btn btn-primary" onclick="resumeGame()">▶ Resume</button>
-      <button class="btn btn-glass" onclick="stopGame()">✕ Quit Session</button>
+      <h2 data-i18n="pause-title">Paused</h2>
+      <p><span data-i18n="pause-time-lbl">Session time:</span> <strong id="pause-time">00:00</strong></p>
+      <button class="btn btn-primary" onclick="resumeGame()" data-i18n="btn-resume">▶ Resume</button>
+      <button class="btn btn-glass" onclick="stopGame()" data-i18n="btn-quit">✕ Quit Session</button>
     </div>
   </div>
 </div>
@@ -320,30 +325,30 @@
       <div class="result-card">
         <div class="result-card-icon">🎯</div>
         <div class="result-card-value" id="res-accuracy">--%</div>
-        <div class="result-card-label">Accuracy</div>
+        <div class="result-card-label" data-i18n="res-acc-lbl">Accuracy</div>
         <div class="result-card-bar"><div class="result-bar-fill" id="res-acc-bar"></div></div>
       </div>
       <div class="result-card">
         <div class="result-card-icon">🌡️</div>
         <div class="result-card-value" id="res-stability">--</div>
-        <div class="result-card-label">Stability</div>
+        <div class="result-card-label" data-i18n="res-stab-lbl">Stability</div>
         <div class="result-bar-label" id="res-stability-label">—</div>
       </div>
       <div class="result-card">
         <div class="result-card-icon">⏱</div>
         <div class="result-card-value" id="res-time">0:00</div>
-        <div class="result-card-label">Time Trained</div>
+        <div class="result-card-label" data-i18n="res-time-lbl">Time Trained</div>
       </div>
       <div class="result-card">
         <div class="result-card-icon">🎵</div>
         <div class="result-card-value" id="res-notes">0/0</div>
-        <div class="result-card-label">Notes Hit</div>
+        <div class="result-card-label" data-i18n="res-notes-lbl">Notes Hit</div>
       </div>
     </div>
 
     <!-- Badge unlock -->
     <div class="badge-unlock-area" id="badge-unlock-area" style="display:none">
-      <h3>🏆 Badge Unlocked!</h3>
+      <h3 data-i18n="badge-unlock-h3">🏆 Badge Unlocked!</h3>
       <div class="unlocked-badge-display" id="unlocked-badge-display"></div>
     </div>
 
@@ -354,9 +359,9 @@
     </div>
 
     <div class="results-actions">
-      <button class="btn btn-primary" onclick="nav('game')">🔄 Play Again</button>
-      <button class="btn btn-glass" onclick="nav('calendar')">📅 Calendar</button>
-      <button class="btn btn-glass" onclick="nav('home')">🏠 Home</button>
+      <button class="btn btn-primary" onclick="nav('game')" data-i18n="btn-play-again">🔄 Play Again</button>
+      <button class="btn btn-glass" onclick="nav('calendar')" data-i18n="btn-res-calendar">📅 Calendar</button>
+      <button class="btn btn-glass" onclick="nav('home')" data-i18n="btn-res-home">🏠 Home</button>
     </div>
   </div>
 </div>
@@ -365,7 +370,7 @@
 <div id="screen-calendar" class="screen">
   <div class="screen-header">
     <button class="btn-back" onclick="nav('home')">‹</button>
-    <h2>Training Calendar</h2>
+    <h2 data-i18n="cal-header">Training Calendar</h2>
     <button class="btn-icon-sm" onclick="nav('report')">📊</button>
   </div>
   <div class="calendar-content">
@@ -373,11 +378,11 @@
       <span class="streak-fire">🔥</span>
       <div>
         <div class="streak-num" id="cal-streak-num">0</div>
-        <div class="streak-text">Day Streak</div>
+        <div class="streak-text" data-i18n="cal-streak-lbl">Day Streak</div>
       </div>
       <div class="streak-total">
         <div class="streak-num" id="cal-total-days">0</div>
-        <div class="streak-text">Total Days</div>
+        <div class="streak-text" data-i18n="cal-total-lbl">Total Days</div>
       </div>
     </div>
 
@@ -387,15 +392,15 @@
       <button class="cal-nav-btn" onclick="calNextMonth()">›</button>
     </div>
 
-    <div class="calendar-grid-header">
-      <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span>
-      <span>Thu</span><span>Fri</span><span>Sat</span>
+    <div class="calendar-grid-header" id="cal-grid-header">
+      <span data-i18n="cal-sun">Sun</span><span data-i18n="cal-mon">Mon</span><span data-i18n="cal-tue">Tue</span><span data-i18n="cal-wed">Wed</span>
+      <span data-i18n="cal-thu">Thu</span><span data-i18n="cal-fri">Fri</span><span data-i18n="cal-sat">Sat</span>
     </div>
     <div class="calendar-grid" id="calendar-grid"></div>
 
     <!-- Milestone progress bar -->
     <div class="milestone-section">
-      <h3>Milestone Progress</h3>
+      <h3 data-i18n="mile-header">Milestone Progress</h3>
       <div class="milestone-bar">
         <div class="milestone-fill" id="milestone-fill"></div>
         <div class="milestone-markers">
@@ -418,18 +423,18 @@
 <div id="screen-badges" class="screen">
   <div class="screen-header">
     <button class="btn-back" onclick="nav('home')">‹</button>
-    <h2>Achievements</h2>
+    <h2 data-i18n="badges-header">Achievements</h2>
     <div></div>
   </div>
   <div class="badges-content">
     <div class="badges-summary">
-      <span id="badges-count">0</span> / 6 Badges Unlocked
+      <span id="badges-count">0</span> / 6 <span data-i18n="badges-unlocked-lbl">Badges Unlocked</span>
     </div>
     <div class="badge-grid" id="badge-grid">
       <!-- Populated by JS -->
     </div>
     <div class="extra-achievements" id="extra-achievements">
-      <h3>Accuracy Awards</h3>
+      <h3 data-i18n="awards-header">Accuracy Awards</h3>
       <div class="award-grid" id="award-grid"></div>
     </div>
   </div>
@@ -439,7 +444,7 @@
 <div id="screen-report" class="screen">
   <div class="screen-header">
     <button class="btn-back" onclick="nav('home')">‹</button>
-    <h2>Weekly Report</h2>
+    <h2 data-i18n="report-header">Weekly Report</h2>
     <div></div>
   </div>
   <div class="report-content">
@@ -449,31 +454,31 @@
       <div class="report-card">
         <div class="report-card-icon">📆</div>
         <div class="report-card-val" id="rpt-days">0</div>
-        <div class="report-card-lbl">Days Trained</div>
+        <div class="report-card-lbl" data-i18n="rpt-days-lbl">Days Trained</div>
       </div>
       <div class="report-card">
         <div class="report-card-icon">⏱</div>
         <div class="report-card-val" id="rpt-time">0m</div>
-        <div class="report-card-lbl">Total Time</div>
+        <div class="report-card-lbl" data-i18n="rpt-time-lbl">Total Time</div>
       </div>
       <div class="report-card">
         <div class="report-card-icon">🎯</div>
         <div class="report-card-val" id="rpt-acc">--%</div>
-        <div class="report-card-lbl">Avg Accuracy</div>
+        <div class="report-card-lbl" data-i18n="rpt-acc-lbl">Avg Accuracy</div>
       </div>
       <div class="report-card">
         <div class="report-card-icon">🌡️</div>
         <div class="report-card-val" id="rpt-stab">--</div>
-        <div class="report-card-lbl">Avg Stability</div>
+        <div class="report-card-lbl" data-i18n="rpt-stab-lbl">Avg Stability</div>
       </div>
     </div>
 
-    <h3 class="chart-title">Daily Training Time (min)</h3>
+    <h3 class="chart-title" data-i18n="chart-title-time">Daily Training Time (min)</h3>
     <div class="bar-chart" id="bar-chart">
       <!-- Populated by JS -->
     </div>
 
-    <h3 class="chart-title">Frequency Level</h3>
+    <h3 class="chart-title" data-i18n="chart-title-freq">Frequency Level</h3>
     <div class="frequency-level-display">
       <div class="freq-level-badge" id="freq-level-badge">F1</div>
       <div class="freq-level-desc" id="freq-level-desc">Keep training to level up!</div>
@@ -488,7 +493,7 @@
       </div>
     </div>
 
-    <h3 class="chart-title">Accuracy Trend</h3>
+    <h3 class="chart-title" data-i18n="chart-title-trend">Accuracy Trend</h3>
     <div class="accuracy-trend" id="accuracy-trend">
       <!-- Populated by JS -->
     </div>
@@ -499,13 +504,13 @@
 <div id="screen-settings" class="screen">
   <div class="screen-header">
     <button class="btn-back" onclick="nav('home')">‹</button>
-    <h2>Settings</h2>
+    <h2 data-i18n="settings-header">Settings</h2>
     <div></div>
   </div>
   <div class="settings-content">
 
     <div class="settings-section">
-      <h3>Microphone Test</h3>
+      <h3 data-i18n="set-mic-title">Microphone Test</h3>
       <div class="mic-test-area">
         <div class="mic-test-visual">
           <div class="mic-test-bar-group" id="mic-test-bars">
@@ -514,48 +519,48 @@
             <div class="mic-bar"></div>
           </div>
         </div>
-        <button id="btn-mic-test" class="btn btn-glass" onclick="toggleMicTest()">🎤 Test Mic</button>
+        <button id="btn-mic-test" class="btn btn-glass" onclick="toggleMicTest()" data-i18n="btn-mic-test">🎤 Test Mic</button>
         <div class="mic-test-hz" id="mic-test-hz">-- Hz</div>
       </div>
     </div>
 
     <div class="settings-section">
-      <h3>Kazoo Calibration</h3>
-      <p class="settings-desc">Calibrate your Low, Mid, and High kazoo pitches for accurate game scoring.</p>
-      <button class="btn btn-primary" onclick="nav('calibration'); initCalibration();" style="margin-top: 8px;">⚙️ Calibrate Pitches</button>
+      <h3 data-i18n="set-calib-title">Kazoo Calibration</h3>
+      <p class="settings-desc" data-i18n="set-calib-desc">Calibrate your Low, Mid, and High kazoo pitches for accurate game scoring.</p>
+      <button class="btn btn-primary" onclick="nav('calibration'); initCalibration();" style="margin-top: 8px;" data-i18n="btn-calib-pitches">⚙️ Calibrate Pitches</button>
     </div>
 
     <div class="settings-section">
-      <h3>Pitch Tolerance</h3>
-      <p class="settings-desc">How forgiving the pitch detection is. Higher = easier.</p>
+      <h3 data-i18n="set-tol-title">Pitch Tolerance</h3>
+      <p class="settings-desc" data-i18n="set-tol-desc">How forgiving the pitch detection is. Higher = easier.</p>
       <div class="slider-row">
-        <span>Strict</span>
+        <span data-i18n="tol-strict">Strict</span>
         <input type="range" id="pitch-tolerance-slider" min="5" max="50" step="5" value="15" oninput="updateTolerance(this.value)" />
-        <span>Relaxed</span>
+        <span data-i18n="tol-relaxed">Relaxed</span>
       </div>
-      <div class="slider-val">Tolerance: <strong id="tolerance-val">±15 Hz</strong></div>
+      <div class="slider-val"><span data-i18n="tol-prefix">Tolerance:</span> <strong id="tolerance-val">±15 Hz</strong></div>
     </div>
 
     <div class="settings-section">
-      <h3>Game Speed</h3>
+      <h3 data-i18n="set-speed-title">Game Speed</h3>
       <div class="speed-options">
-        <button class="speed-btn active" data-speed="slow" onclick="setSpeed(this)">🐢 Slow</button>
-        <button class="speed-btn" data-speed="normal" onclick="setSpeed(this)">🎵 Normal</button>
-        <button class="speed-btn" data-speed="fast" onclick="setSpeed(this)">⚡ Fast</button>
+        <button class="speed-btn active" data-speed="slow" onclick="setSpeed(this)" data-i18n="speed-slow">🐢 Slow</button>
+        <button class="speed-btn" data-speed="normal" onclick="setSpeed(this)" data-i18n="speed-normal">🎵 Normal</button>
+        <button class="speed-btn" data-speed="fast" onclick="setSpeed(this)" data-i18n="speed-fast">⚡ Fast</button>
       </div>
     </div>
 
     <div class="settings-section">
-      <h3>Song / Pattern</h3>
+      <h3 data-i18n="set-song-title">Song / Pattern</h3>
       <div class="song-select" id="song-select">
         <!-- Populated by JS -->
       </div>
     </div>
 
     <div class="settings-section danger-section">
-      <h3>Data Management</h3>
-      <button class="btn btn-danger" onclick="confirmClearData()">🗑 Clear All Data</button>
-      <p class="settings-desc">This will erase all your sessions, badges, and calendar progress.</p>
+      <h3 data-i18n="set-data-title">Data Management</h3>
+      <button class="btn btn-danger" onclick="confirmClearData()" data-i18n="btn-clear-data">🗑 Clear All Data</button>
+      <p class="settings-desc" data-i18n="set-data-desc">This will erase all your sessions, badges, and calendar progress.</p>
     </div>
   </div>
 </div>
@@ -566,10 +571,10 @@
 <div id="global-badge-flash" class="badge-flash hidden">
   <div class="badge-flash-content">
     <div class="badge-flash-icon" id="flash-badge-icon">🏆</div>
-    <h2>Badge Unlocked!</h2>
+    <h2 data-i18n="flash-badge-h2">Badge Unlocked!</h2>
     <div class="badge-flash-name" id="flash-badge-name">Day 1 Champion</div>
     <p id="flash-badge-desc">You completed your first training session!</p>
-    <button class="btn btn-primary" onclick="closeBadgeFlash()">Awesome! 🎉</button>
+    <button class="btn btn-primary" onclick="closeBadgeFlash()" data-i18n="btn-close-flash">Awesome! 🎉</button>
   </div>
 </div>
 
@@ -579,8 +584,8 @@
     <h3 id="confirm-title">Are you sure?</h3>
     <p id="confirm-msg">This action cannot be undone.</p>
     <div class="confirm-buttons">
-      <button class="btn btn-glass" id="confirm-cancel" onclick="closeConfirm()">Cancel</button>
-      <button class="btn btn-danger" id="confirm-ok">Yes, Delete</button>
+      <button class="btn btn-glass" id="confirm-cancel" onclick="closeConfirm()" data-i18n="btn-cancel">Cancel</button>
+      <button class="btn btn-danger" id="confirm-ok" data-i18n="btn-confirm-yes">Yes, Delete</button>
     </div>
   </div>
 </div>
