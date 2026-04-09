@@ -137,8 +137,8 @@ export default function SettingsPage() {
               >
                 <div className="song-option-icon">{s.icon}</div>
                 <div className="song-option-info">
-                  <div className="song-opt-name">{s.name}</div>
-                  <div className="song-opt-desc">{s.desc} · {s.difficulty}</div>
+                  <div className="song-opt-name">{t(s.nameKey)}</div>
+                  <div className="song-opt-desc">{t(s.descKey)} · {t(s.diffKey)}</div>
                 </div>
               </div>
             ))}
@@ -147,9 +147,9 @@ export default function SettingsPage() {
 
         {/* Clear data */}
         <div className="settings-section">
-          <h3>Data Management</h3>
-          <button className="btn btn-danger" onClick={() => setShowConfirm(true)}>🗑 Clear All Data</button>
-          <p className="settings-desc">This will erase all your sessions, badges, and calendar progress.</p>
+          <h3>{t('set-data-title' as any)}</h3>
+          <button className="btn btn-danger" onClick={() => setShowConfirm(true)}>{t('btn-clear-data')}</button>
+          <p className="settings-desc">{t('set-data-desc')}</p>
         </div>
       </div>
 

@@ -62,10 +62,10 @@ export default function ReportPage() {
 
         <div className="report-summary-cards">
           {[
-            { icon: '📆', val: daysTrained, lbl: 'Days Trained' },
-            { icon: '⏱', val: formatT(totalMins), lbl: 'Total Time' },
-            { icon: '🎯', val: avgAcc !== null ? `${avgAcc}%` : '--', lbl: 'Avg Accuracy' },
-            { icon: '🌡️', val: avgStab !== null ? `${avgStab}%` : '--', lbl: 'Avg Stability' },
+            { icon: '📆', val: daysTrained, lbl: t('rpt-days-lbl') },
+            { icon: '⏱', val: formatT(totalMins), lbl: t('rpt-time-lbl') },
+            { icon: '🎯', val: avgAcc !== null ? `${avgAcc}%` : '--', lbl: t('rpt-acc-lbl') },
+            { icon: '🌡️', val: avgStab !== null ? `${avgStab}%` : '--', lbl: t('rpt-stab-lbl') },
           ].map(c => (
             <div key={c.lbl} className="report-card">
               <div className="report-card-icon">{c.icon}</div>

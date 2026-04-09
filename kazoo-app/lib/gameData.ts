@@ -43,11 +43,11 @@ export interface NotePattern {
 
 export interface SongDef {
   id: string;
-  name: string;
+  nameKey: any;
   icon: string;
-  desc: string;
+  descKey: any;
   bpm: number;
-  difficulty: string;
+  diffKey: any;
   pattern: NotePattern[];
 }
 
@@ -74,21 +74,21 @@ export function generatePattern(type: 'warmup' | 'daily' | 'challenge'): NotePat
 
 export const SONGS: SongDef[] = [
   {
-    id: 'warmup', name: 'Warm-Up Session', icon: '🌅',
-    desc: 'Slow, gentle notes — perfect for beginners',
-    bpm: 60, difficulty: 'Easy',
+    id: 'warmup', nameKey: 'song-warmup-name', icon: '🌅',
+    descKey: 'song-warmup-desc',
+    bpm: 60, diffKey: 'diff-easy',
     pattern: generatePattern('warmup'),
   },
   {
-    id: 'daily', name: 'Daily Trainer', icon: '🎵',
-    desc: 'Moderate rhythm with pitch variety',
-    bpm: 72, difficulty: 'Normal',
+    id: 'daily', nameKey: 'song-daily-name', icon: '🎵',
+    descKey: 'song-daily-desc',
+    bpm: 72, diffKey: 'diff-normal',
     pattern: generatePattern('daily'),
   },
   {
-    id: 'challenge', name: 'Power Hum', icon: '⚡',
-    desc: 'Faster notes, more accuracy required',
-    bpm: 90, difficulty: 'Hard',
+    id: 'challenge', nameKey: 'song-challenge-name', icon: '⚡',
+    descKey: 'song-challenge-desc',
+    bpm: 90, diffKey: 'diff-hard',
     pattern: generatePattern('challenge'),
   },
 ];

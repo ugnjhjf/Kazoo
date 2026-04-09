@@ -71,7 +71,7 @@ export default function ResultsPage() {
 
           {newBadge && (
             <div className="badge-unlock-area">
-              <h3>🏆 Badge Unlocked!</h3>
+              <h3>🏆 {t('res-badge-unlocked')}</h3>
               <div className="unlocked-badge-display">{newBadge.icon}</div>
             </div>
           )}
@@ -94,8 +94,8 @@ export default function ResultsPage() {
           <div className="badge-flash-content">
             <div className="badge-flash-icon">{newBadge.icon}</div>
             <h2>{t('res-flash-title')}</h2>
-            <div className="badge-flash-name">{newBadge.name}</div>
-            <p>{newBadge.desc}</p>
+            <div className="badge-flash-name">{t(newBadge.nameKey)}</div>
+            <p>{t(newBadge.descKey)}</p>
             <button className="btn btn-primary" onClick={() => setShowFlash(false)}>{t('res-flash-btn')}</button>
           </div>
         </div>

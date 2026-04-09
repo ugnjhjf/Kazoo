@@ -151,6 +151,49 @@ export const translations = {
     'mini-hits': 'Hits',
     'mini-misses': 'Misses',
     'mini-left': 'Left',
+
+    // Badges Metadata
+    'badge-day1-name': 'First Step',
+    'badge-day1-desc': 'Completed your first training day!',
+    'badge-day2-name': 'Comeback',
+    'badge-day2-desc': 'Two days of training in the books!',
+    'badge-day3-name': 'Three Strong',
+    'badge-day3-desc': 'Building a streak — 3 days!',
+    'badge-day7-name': 'Week Warrior',
+    'badge-day7-desc': 'A full week of oral training!',
+    'badge-day14-name': 'Fortnight Force',
+    'badge-day14-desc': 'Two weeks of consistency!',
+    'badge-day21-name': 'Iron Jaw',
+    'badge-day21-desc': 'Ultimate 21-day challenge complete!',
+
+    // Awards Metadata
+    'award-acc80-name': 'Sharp Shooter',
+    'award-acc80-crit': '80%+ accuracy in a session',
+    'award-acc90-name': 'Diamond Hum',
+    'award-acc90-crit': '90%+ accuracy in a session',
+    'award-acc95-name': 'Perfect Resonance',
+    'award-acc95-crit': '95%+ accuracy in a session',
+    'award-stable-name': 'Steady Stream',
+    'award-stable-crit': 'Stability ≥ 80% in a session',
+
+    // Songs Metadata
+    'song-warmup-name': 'Warm-Up Session',
+    'song-warmup-desc': 'Slow, gentle notes — perfect for beginners',
+    'song-daily-name': 'Daily Trainer',
+    'song-daily-desc': 'Moderate rhythm with pitch variety',
+    'song-challenge-name': 'Power Hum',
+    'song-challenge-desc': 'Faster notes, more accuracy required',
+    'diff-easy': 'Easy',
+    'diff-normal': 'Normal',
+    'diff-hard': 'Hard',
+    'set-data-title': 'Data Management',
+
+    // Toasts
+    'toast-perfect': '🎵 Perfect!',
+    'toast-good': '✅ Good!',
+    'toast-ok': '👍 OK',
+    'toast-miss': '❌ Missed',
+    'toast-skip': '⚠️ Skipped',
   },
   zh: {
     // Shared
@@ -304,6 +347,49 @@ export const translations = {
     'freq-desc-3': 'F3 — 完成一半！繼續保持。',
     'freq-desc-4': 'F4 — 進階訓練者！再訓練 7 天即可到達 F5。',
     'freq-desc-5': 'F5 — 頂尖穩定度！大師級表現！ 🏆',
+
+    // Badges Metadata
+    'badge-day1-name': '初步啟程',
+    'badge-day1-desc': '完成了第一天的訓練！',
+    'badge-day2-name': '持之以恆',
+    'badge-day2-desc': '訓練記錄已達兩天！',
+    'badge-day3-name': '三日之成',
+    'badge-day3-desc': '建立了三天連續訓練！',
+    'badge-day7-name': '周間勇士',
+    'badge-day7-desc': '完成了一整週的肌肉訓練！',
+    'badge-day14-name': '雙週力量',
+    'badge-day14-desc': '連續兩週保持訓練！',
+    'badge-day21-name': '鐵頜大師',
+    'badge-day21-desc': '完成終極 21 天挑戰！',
+
+    // Awards Metadata
+    'award-acc80-name': '精準射手',
+    'award-acc80-crit': '單次訓練準確度 ≥ 80%',
+    'award-acc90-name': '鑽石哼唱',
+    'award-acc90-crit': '單次訓練準確度 ≥ 90%',
+    'award-acc95-name': '完美共鳴',
+    'award-acc95-crit': '單次訓練準確度 ≥ 95%',
+    'award-stable-name': '穩定平流',
+    'award-stable-crit': '單次訓練穩定度 ≥ 80%',
+
+    // Songs Metadata
+    'song-warmup-name': '熱身練習',
+    'song-warmup-desc': '節奏緩慢、音符溫和，適合初學者',
+    'song-daily-name': '每日訓練',
+    'song-daily-desc': '節奏適中，包含多樣的音高變化',
+    'song-challenge-name': '強力哼唱',
+    'song-challenge-desc': '節奏較快，需要更高的準確度',
+    'diff-easy': '簡單',
+    'diff-normal': '一般',
+    'diff-hard': '困難',
+    'set-data-title': '數據管理',
+
+    // Toasts
+    'toast-perfect': '🎵 完美！',
+    'toast-good': '✅ 優秀！',
+    'toast-ok': '👍 還行',
+    'toast-miss': '❌ 遺漏',
+    'toast-skip': '⚠️ 跳過',
   }
 };
 

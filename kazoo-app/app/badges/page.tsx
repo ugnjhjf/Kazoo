@@ -38,7 +38,7 @@ export default function BadgesPage() {
             return (
               <div key={b.id} className={`badge-item${unlocked ? ' unlocked' : ''}`}>
                 <div className="badge-item-icon">{b.icon}</div>
-                <div className="badge-item-title">{b.name}</div>
+                <div className="badge-item-title">{unlocked ? t(b.nameKey) : t('badges-locked')}</div>
                 <div className="badge-item-sub">{t('mile-badge-day', { day: b.day })}</div>
                 {unlocked ? (
                   <div className="badge-item-date">{date}</div>
@@ -59,8 +59,8 @@ export default function BadgesPage() {
                 <div key={a.id} className={`award-item${unlocked ? ' unlocked' : ''}`}>
                   <div className="award-icon">{a.icon}</div>
                   <div className="award-info">
-                    <div className="award-name">{a.name}</div>
-                    <div className="award-crit">{a.criterion}</div>
+                    <div className="award-name">{t(a.nameKey)}</div>
+                    <div className="award-crit">{t(a.criterionKey)}</div>
                   </div>
                 </div>
               );

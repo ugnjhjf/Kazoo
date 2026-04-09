@@ -100,11 +100,11 @@ export default function GamePage() {
     });
 
     const trainedDays = getTrainedDays(data);
-    let newBadge: { icon: string; name: string; desc: string } | null = null;
+    let newBadge: { icon: string; nameKey: any; descKey: any } | null = null;
     BADGE_DEFS.forEach(b => {
       if (trainedDays.length >= b.day && !data.badges[b.id]) {
         data.badges[b.id] = today;
-        if (!newBadge) newBadge = { icon: b.icon, name: b.name, desc: b.desc };
+        if (!newBadge) newBadge = { icon: b.icon, nameKey: b.nameKey, descKey: b.descKey };
       }
     });
 
@@ -259,15 +259,15 @@ export default function GamePage() {
           const acc = note.totalWindowFrames > 0 ? note.hitFrames / note.totalWindowFrames : 0;
           if (acc >= 0.4) {
             G.hits++;
-            showToast(acc >= 0.9 ? '🎵 Perfect!' : acc >= 0.7 ? '✅ Good!' : '👍 OK');
+            showToast(acc >= 0.9 ? t('toast-perfect') : acc >= 0.7 ? t('toast-good') : t('toast-ok'));
             const el2 = G.noteDomElements.get(note);
             if (el2) { el2.classList.add('hit'); setTimeout(() => el2.remove(), 400); }
           } else {
             G.misses++;
             const el2 = G.noteDomElements.get(note);
             if (el2) { el2.classList.add('miss'); setTimeout(() => el2.remove(), 400); }
-            if (note.totalWindowFrames > 0) showToast('❌ Missed');
-            else showToast('⚠️ Skipped');
+            if (note.totalWindowFrames > 0) showToast(t('toast-miss'));
+            else showToast(t('toast-skip'));
           }
           note.state = 'done';
           const totalAcc = G.totalTargetFrames > 0 ? Math.round((G.hitFrames / G.totalTargetFrames) * 100) : 0;
@@ -312,7 +312,7 @@ export default function GamePage() {
     G.speedPx = SPEED_PX_PER_SEC[settings.speed] || 150;
     G.notes = songDef.pattern.map(n => ({ ...n, state: 'pending', yPos: -50, hitFrames: 0, totalWindowFrames: 0 }));
 
-    setSongName(songDef.name);
+    setSongName(t(songDef.nameKey as any));
     setSessionTime(0);
     setAccuracyVal('--%');
     setHitsVal(0); setMissesVal(0);

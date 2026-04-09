@@ -16,7 +16,7 @@ export interface LastGameResult {
   durationS: number;
   hits: number;
   total: number;
-  newBadge: { icon: string; name: string; desc: string } | null;
+  newBadge: { icon: string; nameKey: any; descKey: any } | null;
   dateKey: string;
 }
 
