@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  output: "export",
+  basePath: "/Kazoo",
   allowedDevOrigins: ['192.168.224.129', 'localhost'],
 };
 
