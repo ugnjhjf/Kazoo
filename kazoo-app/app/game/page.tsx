@@ -31,9 +31,7 @@ export default function GamePage() {
     const [hzDisplay, setHzDisplay] = useState('--');
     const [stepProgressPct, setStepProgressPct] = useState(0);
   const [progressPct, setProgressPct] = useState(0);
-  const [toast, setToast] = useState('');
-  const [toastVisible, setToastVisible] = useState(false);
-  const [songName, setSongName] = useState('Warm-Up Session');
+    const [songName, setSongName] = useState('Warm-Up Session');
   const [gridTotal, setGridTotal] = useState(1);
   // New: pitch labels for two display rectangles
   const [currentPitchLabel, setCurrentPitchLabel] = useState<PitchLabel>('--');
@@ -60,15 +58,8 @@ export default function GamePage() {
     speedPx: 150,
     song: SONGS[0],
   });
-  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const showToast = useCallback((msg: string) => {
-    setToast(msg);
-    setToastVisible(true);
-    if (toastTimer.current) clearTimeout(toastTimer.current);
-    toastTimer.current = setTimeout(() => setToastVisible(false), 900);
-  }, []);
-
+  
+  
   const isOnPitch = useCallback((hz: number, pitch: 'low' | 'mid' | 'high') => {
     const targets = {
       low: settings.calibrationData?.low ?? 200,
@@ -158,17 +149,17 @@ export default function GamePage() {
       if (hz > 60 && isOnPitch(hz, currentTargetPitch.toLowerCase() as any)) {
         G.hitFrames += dt; // Accrue time in seconds
         G.totalTargetFrames++;
-        if (G.hitFrames >= 3.0) { // 3 seconds to complete step
+        if (G.hitFrames >= 1.5) { // 1.5 seconds to complete step
           G.hits++;
           G.hitFrames = 0;
           setHitsVal(G.hits);
-          showToast(t('toast-perfect'));
+          
         }
       } else {
         // No decay, just don't accrue
         if (hz > 60) G.totalTargetFrames++;
       }
-      setStepProgressPct(Math.min(100, (G.hitFrames / 3.0) * 100));
+      setStepProgressPct(Math.min(100, (G.hitFrames / 1.5) * 100));
     } else {
       setTargetPitchLabel('--');
     }
@@ -185,7 +176,7 @@ export default function GamePage() {
 
 
     animRef.current = requestAnimationFrame(gameFrame);
-  }, [detectPitch, calcStability, isOnPitch, showToast, endGame, settings]);
+  }, [detectPitch, calcStability, isOnPitch, endGame, settings]);
 
   const startGameLoop = useCallback(() => {
     const G = gameRef.current;
@@ -335,8 +326,7 @@ export default function GamePage() {
               </div>
             </div>
 
-            {/* Feedback toast */}
-            <div className={`feedback-toast${toastVisible ? ' visible' : ''}`}>{toast}</div>
+            
           </div>
 
           {/* ── Grid Walking – now shows pre-specified pitches ── */}
@@ -368,7 +358,6 @@ export default function GamePage() {
               </div>
             </div>
 
-            {/* Song progress & mini stats */}
             <div className="game-bottom">
               <div className="game-song-info">
                 <span className="game-song-name">{songName}</span>
@@ -378,11 +367,10 @@ export default function GamePage() {
               </div>
               <div className="game-mini-stats">
                 <div className="mini-stat"><span className="mini-stat-val">{hitsVal}</span><span className="mini-stat-label">{t('mini-hits')}</span></div>
-                
               </div>
             </div>
-          </div>
 
+          </div>
           {/* Pause overlay */}
           {paused && (
             <div className="pause-overlay">

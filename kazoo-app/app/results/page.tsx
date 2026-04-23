@@ -36,35 +36,37 @@ export default function ResultsPage() {
           <div className="orb orb1" /><div className="orb orb2" />
         </div>
         <div className="results-content">
-          <div className="results-header">
-            <div className="results-icon">{icon}</div>
-            <h2 className="results-title">{title}</h2>
-            <p className="results-sub">{t('res-sub')}</p>
-          </div>
-
-          <div className="results-cards">
-            <div className="result-card">
-              <div className="result-card-icon">⏱</div>
-              <div className="result-card-value">{formatTime(durationS)}</div>
-              <div className="result-card-label">{t('res-time-lbl')}</div>
+          <div className="results-main-col">
+            <div className="results-header">
+              <div className="results-icon">{icon}</div>
+              <h2 className="results-title">{title}</h2>
+              <p className="results-sub">{t('res-sub')}</p>
             </div>
-            <div className="result-card">
-              <div className="result-card-icon">🚶</div>
-              <div className="result-card-value">{hits}</div>
-              <div className="result-card-label">{t('res-notes-lbl')}</div>
-            </div>
-          </div>
 
-          {newBadge && (
-            <div className="badge-unlock-area">
-              <h3>🏆 {t('res-badge-unlocked')}</h3>
-              <div className="unlocked-badge-display">{newBadge.icon}</div>
+            <div className="results-cards">
+              <div className="result-card">
+                <div className="result-card-icon">⏱</div>
+                <div className="result-card-value">{formatTime(durationS)}</div>
+                <div className="result-card-label">{t('res-time-lbl')}</div>
+              </div>
+              <div className="result-card">
+                <div className="result-card-icon">🚶</div>
+                <div className="result-card-value">{hits}</div>
+                <div className="result-card-label">{t('res-notes-lbl')}</div>
+              </div>
             </div>
-          )}
 
-          <div className="results-calendar-note">
-            <span className="cal-note-icon">📅</span>
-            <span>{t('res-cal-note', { date: getReadableDate(dateKey) })}</span>
+            {newBadge && (
+              <div className="badge-unlock-area">
+                <h3>🏆 {t('res-badge-unlocked')}</h3>
+                <div className="unlocked-badge-display">{newBadge.icon}</div>
+              </div>
+            )}
+
+            <div className="results-calendar-note">
+              <span className="cal-note-icon">📅</span>
+              <span>{t('res-cal-note', { date: getReadableDate(dateKey) })}</span>
+            </div>
           </div>
 
           <div className="results-actions">

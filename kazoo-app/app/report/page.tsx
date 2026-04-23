@@ -38,70 +38,76 @@ export default function ReportPage() {
   const formatT = (m: number) => m < 60 ? `${m}m` : `${Math.floor(m/60)}h${m%60}m`;
 
   return (
-    <div className="screen-wrapper">
+    <div className="screen-wrapper tablet-screen">
       <div className="screen-header">
         <button className="btn-back" onClick={() => router.push('/')}>{t('btn-back')}</button>
         <h2>{t('report-header')}</h2>
         <div />
       </div>
 
-      <div className="report-content">
-        <div className="report-period">{period}</div>
+      <div className="report-content tablet-content">
+        <div className="report-left">
+          <div className="report-period">{period}</div>
 
-        <div className="report-summary-cards">
-          {[
-            { icon: '📆', val: daysTrained, lbl: t('rpt-days-lbl') },
-            { icon: '⏱', val: formatT(totalMins), lbl: t('rpt-time-lbl') },
-            { icon: '🎯', val: avgAcc !== null ? `${avgAcc}%` : '--', lbl: t('rpt-acc-lbl') },
-            { icon: '🌡️', val: avgStab !== null ? `${avgStab}%` : '--', lbl: t('rpt-stab-lbl') },
-          ].map(c => (
-            <div key={c.lbl} className="report-card">
-              <div className="report-card-icon">{c.icon}</div>
-              <div className="report-card-val">{c.val}</div>
-              <div className="report-card-lbl">{c.lbl}</div>
-            </div>
-          ))}
-        </div>
-
-        <h3 className="chart-title">{t('chart-title-time')}</h3>
-        <div className="bar-chart">
-          {weekData.map(d => {
-            const pct = maxMins > 0 ? (d.mins / maxMins) * 100 : 0;
-            return (
-              <div key={d.key} className="bar-chart-col">
-                <div className="bar-val">{d.mins > 0 ? `${d.mins}m` : ''}</div>
-                <div className="bar-seg-wrap">
-                  <div className={`bar-seg${d.key === today ? ' today' : ''}${d.mins >= 20 ? ' goal-met' : ''}`} style={{ height: `${pct}%` }} />
-                </div>
-                <div className="bar-label">{t(`day-${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].indexOf(d.label)}` as any)}</div>
+          <div className="report-summary-cards">
+            {[
+              { icon: '📆', val: daysTrained, lbl: t('rpt-days-lbl') },
+              { icon: '⏱', val: formatT(totalMins), lbl: t('rpt-time-lbl') },
+              { icon: '🎯', val: avgAcc !== null ? `${avgAcc}%` : '--', lbl: t('rpt-acc-lbl') },
+              { icon: '🌡️', val: avgStab !== null ? `${avgStab}%` : '--', lbl: t('rpt-stab-lbl') },
+            ].map(c => (
+              <div key={c.lbl} className="report-card">
+                <div className="report-card-icon">{c.icon}</div>
+                <div className="report-card-val">{c.val}</div>
+                <div className="report-card-lbl">{c.lbl}</div>
               </div>
-            );
-          })}
-        </div>
-
-        <h3 className="chart-title">{t('chart-title-freq')}</h3>
-        <div className="frequency-level-display">
-          <div className="freq-level-badge">F{freqLvl}</div>
-          <div className="freq-level-desc">{freqDesc}</div>
-        </div>
-        <div className="freq-level-bar">
-          <div className="freq-level-steps">
-            {[1,2,3,4,5].map(i => (
-              <div key={i} className={`freq-step${i <= freqLvl ? ' active' : ''}`} />
             ))}
+          </div>
+
+          <h3 className="chart-title">{t('chart-title-time')}</h3>
+          <div className="bar-chart tablet-flex-chart">
+            {weekData.map(d => {
+              const pct = maxMins > 0 ? (d.mins / maxMins) * 100 : 0;
+              return (
+                <div key={d.key} className="bar-chart-col">
+                  <div className="bar-val">{d.mins > 0 ? `${d.mins}m` : ''}</div>
+                  <div className="bar-seg-wrap">
+                    <div className={`bar-seg${d.key === today ? ' today' : ''}${d.mins >= 20 ? ' goal-met' : ''}`} style={{ height: `${pct}%` }} />
+                  </div>
+                  <div className="bar-label">{t(`day-${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].indexOf(d.label)}` as any)}</div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
-        <h3 className="chart-title">{t('chart-title-trend')}</h3>
-        <div className="accuracy-trend">
-          {weekData.map(d => (
-            <div key={d.key} className="trend-dot-col">
-              <div className="trend-seg-wrap">
-                <div className="trend-dot" style={{ height: `${d.avgAcc ?? 0}%` }} />
-              </div>
-              <div className="trend-label">{t(`day-${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].indexOf(d.label)}` as any)}</div>
+        <div className="report-right">
+          <h3 className="chart-title">{t('chart-title-freq')}</h3>
+          <div className="frequency-level-display">
+            <div className="freq-level-badge">F{freqLvl}</div>
+            <div className="freq-level-desc">{freqDesc}</div>
+          </div>
+          <div className="freq-level-bar">
+            <div className="freq-level-steps">
+              {[1,2,3,4,5].map(i => (
+                <div key={i} className={`freq-step${i <= freqLvl ? ' active' : ''}`} />
+              ))}
             </div>
-          ))}
+          </div>
+
+          <div style={{ marginTop: 'auto', marginBottom: '20px' }}></div>
+
+          <h3 className="chart-title">{t('chart-title-trend')}</h3>
+          <div className="accuracy-trend tablet-flex-chart">
+            {weekData.map(d => (
+              <div key={d.key} className="trend-dot-col">
+                <div className="trend-seg-wrap">
+                  <div className="trend-dot" style={{ height: `${d.avgAcc ?? 0}%` }} />
+                </div>
+                <div className="trend-label">{t(`day-${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].indexOf(d.label)}` as any)}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
