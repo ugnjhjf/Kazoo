@@ -9,16 +9,14 @@ export default function HomePage() {
   const router = useRouter();
   const { settings, setSettings } = useAppStore();
   const { t } = useTranslation();
-  const [stats, setStats] = useState({ streak: 0, totalMin: 0, badgesEarned: 0 });
-
-  useEffect(() => {
+  const [stats, setStats] = useState(() => {
     const data = dbLoad();
-    setStats({
+    return {
       streak: getStreak(data),
       totalMin: getTotalMinutes(data),
       badgesEarned: Object.keys(data.badges).length,
-    });
-  }, []);
+    };
+  });
 
   const formatTime = (min: number) =>
     min < 60 ? `${min}m` : `${Math.floor(min / 60)}h${min % 60}m`;

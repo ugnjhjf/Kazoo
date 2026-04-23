@@ -7,43 +7,31 @@ import { useTranslation } from '@/hooks/useTranslation';
 export default function ReportPage() {
   const router = useRouter();
   const { t } = useTranslation();
-  const [period, setPeriod] = useState('');
-  const [daysTrained, setDaysTrained] = useState(0);
-  const [totalMins, setTotalMins] = useState(0);
-  const [avgAcc, setAvgAcc] = useState<number | null>(null);
-  const [avgStab, setAvgStab] = useState<number | null>(null);
-  const [weekData, setWeekData] = useState<{ label: string; mins: number; avgAcc: number | null; key: string }[]>([]);
-  const [freqLvl, setFreqLvl] = useState(1);
-  const [freqDesc, setFreqDesc] = useState('');
+  const [data] = useState(() => dbLoad());
+  const [week, setWeek] = useState(() => getWeeklySessions(data));
+  const [start] = useState(() => week[0].date);
+  const [end] = useState(() => week[6].date);
+  const startMon = t(`mon-s-${start.getMonth()}` as any);
+  const endMon = t(`mon-s-${end.getMonth()}` as any);
+  const [period] = useState(() => `${startMon} ${start.getDate()} – ${endMon} ${end.getDate()}, ${end.getFullYear()}`);
 
-  useEffect(() => {
-    const data = dbLoad();
-    const week = getWeeklySessions(data);
-    const start = week[0].date;
-    const end = week[6].date;
-    const startMon = t(`mon-s-${start.getMonth()}` as any);
-    const endMon = t(`mon-s-${end.getMonth()}` as any);
-    setPeriod(`${startMon} ${start.getDate()} – ${endMon} ${end.getDate()}, ${end.getFullYear()}`);
-
-    const dt = week.filter(d => d.mins > 0).length;
-    const total = week.reduce((a, d) => a + d.mins, 0);
+  const [daysTrained] = useState(() => week.filter(d => d.mins > 0).length);
+  const [totalMins] = useState(() => week.reduce((a, d) => a + d.mins, 0));
+  const [avgAcc] = useState(() => {
     const accs = week.filter(d => d.avgAcc !== null).map(d => d.avgAcc as number);
-    const acc = accs.length ? Math.round(accs.reduce((a, v) => a + v, 0) / accs.length) : null;
+    return accs.length ? Math.round(accs.reduce((a, v) => a + v, 0) / accs.length) : null;
+  });
+  const [avgStab] = useState(() => {
     const recent = data.sessions.slice(-7);
-    const stab = recent.length ? Math.round(recent.reduce((a, s) => a + s.stability, 0) / recent.length) : null;
+    return recent.length ? Math.round(recent.reduce((a, s) => a + s.stability, 0) / recent.length) : null;
+  });
+  const [weekData] = useState(() => week.map(d => ({ label: d.label, mins: d.mins, avgAcc: d.avgAcc, key: d.key })));
 
-    setDaysTrained(dt);
-    setTotalMins(total);
-    setAvgAcc(acc);
-    setAvgStab(stab);
-    setWeekData(week.map(d => ({ label: d.label, mins: d.mins, avgAcc: d.avgAcc, key: d.key })));
-
-    const tdays = getTrainedDays(data);
-    const totalTrainedDaysCount = tdays.length;
-    const lvl = totalTrainedDaysCount >= 21 ? 5 : totalTrainedDaysCount >= 14 ? 4 : totalTrainedDaysCount >= 7 ? 3 : totalTrainedDaysCount >= 3 ? 2 : 1;
-    setFreqLvl(lvl);
-    setFreqDesc(t(`freq-desc-${lvl}` as any));
-  }, [t]);
+  const [freqLvl] = useState(() => {
+    const totalTrainedDaysCount = getTrainedDays(data).length;
+    return totalTrainedDaysCount >= 21 ? 5 : totalTrainedDaysCount >= 14 ? 4 : totalTrainedDaysCount >= 7 ? 3 : totalTrainedDaysCount >= 3 ? 2 : 1;
+  });
+  const freqDesc = t(`freq-desc-${freqLvl}` as any);
 
   const today = todayKey();
   const maxMins = Math.max(...weekData.map(d => d.mins), 20);

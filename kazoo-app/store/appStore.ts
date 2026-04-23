@@ -1,5 +1,6 @@
 'use client';
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 export interface AppSettings {
   tolerance: number;
@@ -27,15 +28,22 @@ interface AppStore {
   setLastResult: (r: LastGameResult) => void;
 }
 
-export const useAppStore = create<AppStore>((set) => ({
-  settings: {
-    tolerance: 50,
-    speed: 'slow',
-    selectedSong: 'warmup',
-    layoutMode: 'mobile',
-    language: 'en',
-  },
-  lastResult: null,
-  setSettings: (s) => set((state) => ({ settings: { ...state.settings, ...s } })),
-  setLastResult: (r) => set({ lastResult: r }),
-}));
+export const useAppStore = create<AppStore>()(
+  persist(
+    (set) => ({
+      settings: {
+        tolerance: 50,
+        speed: 'slow',
+        selectedSong: 'warmup',
+        layoutMode: 'mobile',
+        language: 'en',
+      },
+      lastResult: null,
+      setSettings: (s) => set((state) => ({ settings: { ...state.settings, ...s } })),
+      setLastResult: (r) => set({ lastResult: r }),
+    }),
+    {
+      name: 'kazoo-settings',
+    }
+  )
+);

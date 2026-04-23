@@ -9,14 +9,9 @@ import { useTranslation } from '@/hooks/useTranslation';
 export default function BadgesPage() {
   const router = useRouter();
   const { t } = useTranslation();
-  const [badges, setBadges] = useState<Record<string, string>>({});
-  const [awards, setAwards] = useState<Record<string, boolean>>({});
-
-  useEffect(() => {
-    const data = dbLoad();
-    setBadges(data.badges);
-    setAwards(data.accuracyAwards);
-  }, []);
+  const [data] = useState(() => dbLoad());
+  const [badges, setBadges] = useState<Record<string, string>>(() => data.badges);
+  const [awards, setAwards] = useState<Record<string, boolean>>(() => data.accuracyAwards);
 
   const earned = Object.keys(badges).length;
 

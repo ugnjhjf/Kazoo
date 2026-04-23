@@ -8,20 +8,13 @@ import { useTranslation } from '@/hooks/useTranslation';
 export default function CalendarPage() {
   const router = useRouter();
   const { t } = useTranslation();
-  const now = new Date();
+  const [data] = useState(() => dbLoad());
+  const [now] = useState(() => new Date());
   const [year, setYear] = useState(now.getFullYear());
   const [month, setMonth] = useState(now.getMonth());
-  const [trainedDays, setTrainedDays] = useState<Set<string>>(new Set());
-  const [streak, setStreak] = useState(0);
-  const [totalDays, setTotalDays] = useState(0);
-
-  useEffect(() => {
-    const data = dbLoad();
-    const days = new Set(getTrainedDays(data));
-    setTrainedDays(days);
-    setStreak(getStreak(data));
-    setTotalDays(days.size);
-  }, []);
+  const [trainedDays, setTrainedDays] = useState<Set<string>>(() => new Set(getTrainedDays(data)));
+  const [streak, setStreak] = useState(() => getStreak(data));
+  const [totalDays, setTotalDays] = useState(() => trainedDays.size);
 
   const today = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
 
