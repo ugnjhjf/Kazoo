@@ -15,10 +15,12 @@ interface GameNote extends NotePattern {
   totalWindowFrames: number;
 }
 
+type PitchLabel = 'LOW' | 'MID' | 'HIGH' | '--';
+
 export default function GamePage() {
   const router = useRouter();
   const { t } = useTranslation();
-  const { requestMic, detectPitch, calcStability, isActive, getTimeDomainData } = useAudioEngine();
+  const { requestMic, detectPitch, calcStability, isActive } = useAudioEngine();
   const { settings, setLastResult } = useAppStore();
 
   const [micGranted, setMicGranted] = useState(false);
@@ -26,52 +28,43 @@ export default function GamePage() {
   const [sessionTime, setSessionTime] = useState(0);
   const [accuracyVal, setAccuracyVal] = useState('--');
   const [hitsVal, setHitsVal] = useState(0);
-  const [missesVal, setMissesVal] = useState(0);
-  const [notesLeft, setNotesLeft] = useState(0);
-  const [hzDisplay, setHzDisplay] = useState('--');
-  const [comboCount, setComboCount] = useState(0);
-  const [stabilityPct, setStabilityPct] = useState(0);
+    const [hzDisplay, setHzDisplay] = useState('--');
+    const [stepProgressPct, setStepProgressPct] = useState(0);
   const [progressPct, setProgressPct] = useState(0);
-  const [toast, setToast] = useState('');
-  const [toastVisible, setToastVisible] = useState(false);
-  const [songName, setSongName] = useState('Warm-Up Session');
-  const [dotTop, setDotTop] = useState('50%');
+    const [songName, setSongName] = useState('Warm-Up Session');
   const [gridTotal, setGridTotal] = useState(1);
+  // New: pitch labels for two display rectangles
+  const [currentPitchLabel, setCurrentPitchLabel] = useState<PitchLabel>('--');
+  const [targetPitchLabel, setTargetPitchLabel] = useState<PitchLabel>('--');
+  // New: pre-specified note pattern for grid
+  const [notePattern, setNotePattern] = useState<Array<'low' | 'mid' | 'high'>>([]);
 
+  // Hidden lane ref for game timing logic (notes still exist but not shown)
   const laneRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const timeDataRef = useRef(new Uint8Array(1024));
   const animRef = useRef<number | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const HIDDEN_LANE_H = 500; // fixed height for timing calculations
   const gameRef = useRef({
     active: false,
     paused: false,
     songElapsed: 0,
     sessionPlaySeconds: 0,
     lastTimestamp: 0,
-    hits: 0, misses: 0,
+    hits: 0,
     hitFrames: 0, totalTargetFrames: 0,
-    combo: 0, maxCombo: 0,
     pitchHistory: [] as number[],
     notes: [] as GameNote[],
     noteDomElements: new Map<GameNote, HTMLDivElement>(),
     speedPx: 150,
     song: SONGS[0],
   });
-  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const showToast = useCallback((msg: string) => {
-    setToast(msg);
-    setToastVisible(true);
-    if (toastTimer.current) clearTimeout(toastTimer.current);
-    toastTimer.current = setTimeout(() => setToastVisible(false), 900);
-  }, []);
-
+  
+  
   const isOnPitch = useCallback((hz: number, pitch: 'low' | 'mid' | 'high') => {
-    const targets = { 
-      low: settings.calibrationData?.low ?? 200, 
-      mid: settings.calibrationData?.mid ?? 320, 
-      high: settings.calibrationData?.high ?? 450 
+    const targets = {
+      low: settings.calibrationData?.low ?? 200,
+      mid: settings.calibrationData?.mid ?? 320,
+      high: settings.calibrationData?.high ?? 450,
     };
     return Math.abs(hz - targets[pitch]) <= settings.tolerance;
   }, [settings.tolerance, settings.calibrationData]);
@@ -89,7 +82,7 @@ export default function GamePage() {
 
     const data = dbLoad();
     const today = todayKey();
-    data.sessions.push({ date: today, durationS, accuracy, stability: stab, hits: G.hits, misses: G.misses, song: G.song.id });
+    data.sessions.push({ date: today, durationS, accuracy, stability: stab, hits: G.hits, misses: 0, song: G.song.id });
 
     ACCURACY_AWARDS.forEach(award => {
       if (award.id === 'stable') {
@@ -109,7 +102,7 @@ export default function GamePage() {
     });
 
     dbSave(data);
-    setLastResult({ accuracy, stability: stab, durationS, hits: G.hits, total: G.hits + G.misses, newBadge, dateKey: today });
+    setLastResult({ accuracy, stability: stab, durationS, hits: G.hits, total: G.song.pattern.length, newBadge, dateKey: today });
     router.push('/results');
   }, [router, setLastResult]);
 
@@ -118,184 +111,76 @@ export default function GamePage() {
     if (!G.active) return;
     if (G.paused) { animRef.current = requestAnimationFrame(gameFrame); return; }
 
-    const lane = laneRef.current;
-    if (!lane) { animRef.current = requestAnimationFrame(gameFrame); return; }
-
     const dt = G.lastTimestamp ? (timestamp - G.lastTimestamp) / 1000 : 0.016;
     G.lastTimestamp = timestamp;
     G.songElapsed += dt;
 
-    const laneH = lane.clientHeight;
+    // Use fixed lane height for timing calculations (lane is hidden)
+    const laneH = HIDDEN_LANE_H;
     const targetLineY = laneH - laneH * 0.20;
 
+    // Detect current pitch and update label
     const hz = detectPitch();
+    let newCurrentPitch: PitchLabel = '--';
     if (hz > 60 && hz < 1200) {
       G.pitchHistory.push(hz);
       if (G.pitchHistory.length > 120) G.pitchHistory.shift();
       setHzDisplay(String(Math.round(hz)));
-      const normHz = Math.max(0, Math.min(1, (hz - 100) / 600));
-      setDotTop(`${laneH * (1 - normHz)}px`);
-    }
-
-    const canvas = canvasRef.current;
-    if (canvas && G.active) {
-      const ctx = canvas.getContext('2d');
+      // Determine closest pitch zone
       const c = settings.calibrationData || { low: 200, mid: 320, high: 450 };
-      if (ctx) {
-        const w = canvas.width;
-        const h = canvas.height;
-        ctx.clearRect(0, 0, w, h);
-        
-        const hzToY = (val: number) => h - (Math.max(0, Math.min(1, (val - 100) / 600)) * h);
-        const tol = settings.tolerance;
-        const yLimitHigh = hzToY(c.high + tol);
-        const yHigh = hzToY(c.high);
-        const yMid = hzToY(c.mid);
-        const yLow = hzToY(c.low);
-        const yLimitLow = hzToY(c.low - tol);
-
-        // Draw boundaries (Red Dashed)
-        ctx.lineWidth = 1.5;
-        ctx.strokeStyle = '#e53e3e';
-        ctx.setLineDash([4, 4]);
-        ctx.beginPath(); ctx.moveTo(0, yLimitHigh); ctx.lineTo(w, yLimitHigh); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(0, yLimitLow); ctx.lineTo(w, yLimitLow); ctx.stroke();
-
-        // Draw targets (Grey)
-        ctx.strokeStyle = '#cbd5e0';
-        ctx.setLineDash([]);
-        ctx.beginPath(); ctx.moveTo(0, yHigh); ctx.lineTo(w, yHigh); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(0, yMid); ctx.lineTo(w, yMid); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(0, yLow); ctx.lineTo(w, yLow); ctx.stroke();
-
-        // Labels
-        ctx.fillStyle = '#a0aec0';
-        ctx.font = '10px Arial';
-        ctx.fillText(String(c.high), 2, yHigh + 10);
-        ctx.fillText(String(c.mid), 2, yMid - 2);
-        ctx.fillText(String(c.low), 2, yLow - 2);
-
-        // Draw pitch history
-        if (G.pitchHistory.length > 0) {
-          ctx.beginPath();
-          ctx.strokeStyle = '#9f7aea'; // purple
-          ctx.lineWidth = 2;
-          const sliceW = w / 120;
-          
-          let lastX = 0;
-          for (let i = 0; i < G.pitchHistory.length; i++) {
-            const x = i * sliceW;
-            const y = hzToY(G.pitchHistory[i]);
-            if (i === 0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
-            lastX = x;
-          }
-          ctx.stroke();
-
-          // Fill underneath
-          ctx.lineTo(lastX, h);
-          ctx.lineTo(0, h);
-          ctx.globalAlpha = 0.15;
-          ctx.fillStyle = '#00b09b'; // cyan
-          ctx.fill();
-          ctx.globalAlpha = 1.0;
-          
-          // Draw dot
-          ctx.beginPath();
-          ctx.fillStyle = '#00e676';
-          ctx.arc(lastX, hzToY(G.pitchHistory[G.pitchHistory.length - 1]), 3, 0, 2 * Math.PI);
-          ctx.fill();
-        }
-      }
+      const dists = [Math.abs(hz - c.low), Math.abs(hz - c.mid), Math.abs(hz - c.high)];
+      const minIdx = dists.indexOf(Math.min(...dists));
+      newCurrentPitch = (['LOW', 'MID', 'HIGH'] as const)[minIdx];
+    } else {
+      setHzDisplay('--');
     }
+    setCurrentPitchLabel(newCurrentPitch);
 
     const stability = calcStability(G.pitchHistory);
-    setStabilityPct(stability);
 
-    G.notes.forEach(note => {
-      if (note.state === 'done') return;
-      const timeSinceStart = G.songElapsed - note.start;
 
-      if (note.state === 'pending' && timeSinceStart > -3) {
-        if (!G.noteDomElements.has(note)) {
-          const el = document.createElement('div');
-          el.className = `game-note ${note.pitch}`;
-          el.style.top = '-60px';
-          el.style.height = `${Math.round(note.duration * 40)}px`;
-          el.textContent = note.pitch.toUpperCase();
-          lane.appendChild(el);
-          G.noteDomElements.set(note, el);
-          note.state = 'active';
-          note.yPos = -50;
-        }
-      }
+    // Process step without failure
+    const currentStep = G.hits;
+    const patternLen = G.song.pattern.length;
+    if (currentStep < patternLen) {
+      const currentTargetPitch = G.song.pattern[currentStep].pitch.toUpperCase() as PitchLabel;
+      setTargetPitchLabel(currentTargetPitch);
 
-      if (note.state === 'active') {
-        note.yPos = (G.songElapsed - note.start + 3) * G.speedPx;
-        const el = G.noteDomElements.get(note);
-        if (el) el.style.top = `${note.yPos}px`;
-
-        const noteBottom = note.yPos + 40;
-        const noteTop = note.yPos;
-        const inZone = noteBottom >= targetLineY - 30 && noteTop <= targetLineY + 30;
-
-        if (inZone) {
-          note.totalWindowFrames++;
-          G.totalTargetFrames++;
-          if (hz > 60 && isOnPitch(hz, note.pitch)) {
-            note.hitFrames++;
-            G.hitFrames++;
-            G.combo++;
-            if (G.combo > G.maxCombo) G.maxCombo = G.combo;
-            if (el) el.style.boxShadow = '0 0 20px var(--clr-accent)';
-          } else {
-            G.combo = 0;
-            if (el) el.style.boxShadow = '';
-          }
-          setComboCount(G.combo);
-        }
-
-        if (note.yPos > laneH + 60) {
-          const acc = note.totalWindowFrames > 0 ? note.hitFrames / note.totalWindowFrames : 0;
-          if (acc >= 0.4) {
-            G.hits++;
-            showToast(acc >= 0.9 ? t('toast-perfect') : acc >= 0.7 ? t('toast-good') : t('toast-ok'));
-            const el2 = G.noteDomElements.get(note);
-            if (el2) { el2.classList.add('hit'); setTimeout(() => el2.remove(), 400); }
-          } else {
-            G.misses++;
-            const el2 = G.noteDomElements.get(note);
-            if (el2) { el2.classList.add('miss'); setTimeout(() => el2.remove(), 400); }
-            if (note.totalWindowFrames > 0) showToast(t('toast-miss'));
-            else showToast(t('toast-skip'));
-          }
-          note.state = 'done';
-          const totalAcc = G.totalTargetFrames > 0 ? Math.round((G.hitFrames / G.totalTargetFrames) * 100) : 0;
-          setAccuracyVal(`${totalAcc}%`);
+      if (hz > 60 && isOnPitch(hz, currentTargetPitch.toLowerCase() as any)) {
+        G.hitFrames += dt; // Accrue time in seconds
+        G.totalTargetFrames++;
+        if (G.hitFrames >= 1.5) { // 1.5 seconds to complete step
+          G.hits++;
+          G.hitFrames = 0;
           setHitsVal(G.hits);
-          setMissesVal(G.misses);
+          
         }
+      } else {
+        // No decay, just don't accrue
+        if (hz > 60) G.totalTargetFrames++;
       }
-    });
+      setStepProgressPct(Math.min(100, (G.hitFrames / 1.5) * 100));
+    } else {
+      setTargetPitchLabel('--');
+    }
 
     const lastNote = G.song.pattern[G.song.pattern.length - 1];
     const totalDuration = lastNote ? lastNote.start + lastNote.duration + 2 : 30;
     const pct = Math.min(100, (G.songElapsed / totalDuration) * 100);
     setProgressPct(pct);
-    setNotesLeft(G.notes.filter(n => n.state !== 'done').length);
 
-    if (G.songElapsed > totalDuration && G.notes.every(n => n.state === 'done')) {
+    if (G.songElapsed > totalDuration || G.hits >= patternLen) {
       endGame(stability);
       return;
     }
 
+
     animRef.current = requestAnimationFrame(gameFrame);
-  }, [detectPitch, calcStability, isOnPitch, showToast, endGame]);
+  }, [detectPitch, calcStability, isOnPitch, endGame, settings]);
 
   const startGameLoop = useCallback(() => {
     const G = gameRef.current;
     const songDef = SONGS.find(s => s.id === settings.selectedSong) || SONGS[0];
-    // Regenerate pattern for fresh randomness
     songDef.pattern = generatePattern(songDef.id as 'warmup' | 'daily' | 'challenge');
 
     G.active = true;
@@ -303,22 +188,27 @@ export default function GamePage() {
     G.songElapsed = 0;
     G.lastTimestamp = 0;
     G.sessionPlaySeconds = 0;
-    G.hits = 0; G.misses = 0;
+    G.hits = 0;
     G.hitFrames = 0; G.totalTargetFrames = 0;
-    G.combo = 0; G.maxCombo = 0;
     G.pitchHistory = [];
     G.noteDomElements = new Map();
     G.song = songDef;
     G.speedPx = SPEED_PX_PER_SEC[settings.speed] || 150;
     G.notes = songDef.pattern.map(n => ({ ...n, state: 'pending', yPos: -50, hitFrames: 0, totalWindowFrames: 0 }));
 
+    // Store pitch pattern for grid display
+    const pitches = songDef.pattern.map(n => n.pitch as 'low' | 'mid' | 'high');
+    setNotePattern(pitches);
+    setGridTotal(pitches.length);
+
     setSongName(t(songDef.nameKey as any));
     setSessionTime(0);
     setAccuracyVal('--%');
-    setHitsVal(0); setMissesVal(0);
-    setNotesLeft(G.notes.length);
-    setComboCount(0); setHzDisplay('--');
-    setGridTotal(Math.max(1, Math.floor(songDef.pattern.length / 2)));
+    setHitsVal(0);
+    setHzDisplay('--');
+    setStepProgressPct(0);
+    setCurrentPitchLabel('--');
+    setTargetPitchLabel('--');
 
     if (laneRef.current) {
       laneRef.current.querySelectorAll('.game-note').forEach(n => n.remove());
@@ -342,14 +232,8 @@ export default function GamePage() {
     else alert('Mic access denied. Please allow microphone use.');
   };
 
-  const handlePause = () => {
-    gameRef.current.paused = true;
-    setPaused(true);
-  };
-  const handleResume = () => {
-    gameRef.current.paused = false;
-    setPaused(false);
-  };
+  const handlePause = () => { gameRef.current.paused = true; setPaused(true); };
+  const handleResume = () => { gameRef.current.paused = false; setPaused(false); };
   const handleQuit = () => {
     gameRef.current.active = false;
     if (timerRef.current) clearInterval(timerRef.current);
@@ -367,8 +251,26 @@ export default function GamePage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Helper: translate pitch key to display label
+  const pitchDisplayLabel = (p: PitchLabel) => {
+    if (p === 'LOW') return t('calib-lbl-low');
+    if (p === 'MID') return t('calib-lbl-mid');
+    if (p === 'HIGH') return t('calib-lbl-high');
+    return '---';
+  };
+
+  const pitchColorClass = (p: PitchLabel) => {
+    if (p === 'LOW') return 'pitch-color-low';
+    if (p === 'MID') return 'pitch-color-mid';
+    if (p === 'HIGH') return 'pitch-color-high';
+    return 'pitch-color-none';
+  };
+
   return (
     <div className="game-screen-wrapper">
+      {/* Hidden lane for game timing logic */}
+      <div ref={laneRef} style={{ position: 'absolute', width: 1, height: HIDDEN_LANE_H, overflow: 'hidden', opacity: 0, pointerEvents: 'none', top: -9999 }} />
+
       {/* Top bar */}
       <div className="game-top-bar">
         <button className="btn-back-sm" onClick={handleQuit}>✕</button>
@@ -393,82 +295,69 @@ export default function GamePage() {
         </div>
       ) : (
         <div className="game-main">
-          <div className="game-split-top">
-            <div className="game-lane-area">
-              {/* Stability Thermometer */}
-              <div className="thermometer-container">
-                <div className="thermo-label top">{t('thermo-lbl-stable')}</div>
-                <div className="thermometer">
-                  <div className="thermo-fill" style={{ height: `${stabilityPct}%` }} />
-                  <div className="thermo-indicator" style={{ bottom: `${stabilityPct}%` }}>🎵</div>
-                </div>
-                <div className="thermo-label bottom">{t('thermo-lbl-erratic')}</div>
+          {/* ── Pitch display area ── */}
+          <div className="pitch-display-area">
+
+            {/* Target pitch rectangle */}
+            <div className="pitch-rect-row">
+              <div className={`pitch-rect pitch-rect-target ${pitchColorClass(targetPitchLabel)}`}>
+                <div className="pitch-rect-label">{t('target-pitch-lbl') || '目標音符'}</div>
+                <div className="pitch-rect-value">{pitchDisplayLabel(targetPitchLabel)}</div>
               </div>
 
-              {/* Note Lane */}
-              <div className="note-lane-wrapper">
-                <div className="pitch-sidebar">
-                  <div className="pitch-label" style={{ top: '8%' }}>{t('calib-lbl-high')}</div>
-                  <div className="pitch-label" style={{ top: '50%' }}>{t('calib-lbl-mid')}</div>
-                  <div className="pitch-label" style={{ bottom: '8%' }}>{t('calib-lbl-low')}</div>
-                </div>
-                <div className="note-lane" ref={laneRef}>
-                  <div className="target-zone">
-                    <div className="target-zone-line" />
-                    <div className="target-zone-glow" />
-                  </div>
-                  <div className="pitch-indicator">
-                    <div className="pitch-dot" style={{ top: dotTop }} />
-                    <div className="pitch-ring" style={{ top: dotTop }} />
-                  </div>
-                </div>
-
-                {/* Feedback toast */}
-                <div className={`feedback-toast${toastVisible ? ' visible' : ''}`}>{toast}</div>
-              </div>
-
-              {/* Right panel */}
-              <div className="game-right-panel">
-                <div className="game-combo-badge">
-                  <span className="combo-count">{comboCount}</span>
-                  <span className="combo-label">{t('combo-lbl')}</span>
-                </div>
-                <div className="game-hz-display">
-                  <span className="hz-display">{hzDisplay}</span>
-                  <span className="hz-label">{t('hz')}</span>
-                </div>
-                {/* Waveform */}
-                <canvas ref={canvasRef} className="hz-wave-canvas" width={80} height={200} style={{ width: '100%', flexGrow: 1 }} />
-                <div className="hz-wave-label" style={{ textAlign: 'center', fontSize: '0.7rem', color: 'var(--clr-text-dim)', marginBottom: '8px' }}>{t('wave-lbl')}</div>
+              {/* Current (user) pitch rectangle */}
+              <div className={`pitch-rect pitch-rect-current ${pitchColorClass(currentPitchLabel)}`}>
+                <div className="pitch-rect-label">{t('current-pitch-lbl') || '您的聲音'}</div>
+                <div className="pitch-rect-value">{pitchDisplayLabel(currentPitchLabel)}</div>
               </div>
             </div>
+
+            {/* Stats row: stability + combo + hz */}
+            <div className="game-stats-row">
+              <div className="step-progress-container">
+                <div className="step-progress-bar">
+                  <div className="step-progress-fill" style={{ width: `${stepProgressPct}%` }} />
+                </div>
+                <span className="step-progress-label">音符进度</span>
+              </div>
+              <div className="game-hz-display">
+                <span className="hz-display">{hzDisplay}</span>
+                <span className="hz-label">{t('hz')}</span>
+              </div>
+            </div>
+
+            
           </div>
 
-          {/* Grid Walking Sub-game */}
+          {/* ── Grid Walking – now shows pre-specified pitches ── */}
           <div className="game-split-bottom">
             <div className="grid-game-header">
               <span className="grid-game-title">{t('grid-journey')}</span>
-              <span className="grid-game-progress">{t('grid-step', { current: Math.min(hitsVal, gridTotal), total: gridTotal })}</span>
+              <span className="grid-game-progress">
+                {t('grid-step', { current: Math.min(hitsVal, gridTotal), total: gridTotal })}
+              </span>
             </div>
             <div className="grid-board">
-              {Array.from({ length: gridTotal + 1 }).map((_, i) => {
-                const isCurrent = i === Math.min(hitsVal, gridTotal);
-                const isPassed = i < hitsVal;
+              {notePattern.map((pitch, i) => {
+                const stepIdx = hitsVal;
+                const isCurrent = i === Math.min(stepIdx, gridTotal - 1) && stepIdx < gridTotal;
+                const isPassed = i < stepIdx;
+                const pitchCls = pitch === 'low' ? 'pitch-color-low' : pitch === 'mid' ? 'pitch-color-mid' : 'pitch-color-high';
+                const pitchTxt = pitch === 'low' ? t('calib-lbl-low') : pitch === 'mid' ? t('calib-lbl-mid') : t('calib-lbl-high');
                 return (
                   <div key={i} className={`grid-cell${isCurrent ? ' active' : ''}${isPassed ? ' passed' : ''}`}>
-                    {isCurrent ? (
-                      <div className="grid-avatar">🚶‍♂️</div>
-                    ) : i === gridTotal ? (
-                      <div>🏁</div>
-                    ) : isPassed ? (
-                      <div>✅</div>
-                    ) : null}
+                    {isCurrent && <div className="grid-avatar">🚶‍♂️</div>}
+                    {isPassed && <div className="grid-check" style={{ fontSize: '1rem', position: 'absolute', top: 2, right: 2 }}>✅</div>}
+                    <div className={`grid-pitch-badge ${pitchCls}`}>{pitchTxt}</div>
                   </div>
                 );
               })}
+              {/* Finish cell */}
+              <div className={`grid-cell${hitsVal >= gridTotal ? ' active' : ''}`}>
+                🏁
+              </div>
             </div>
-            
-            {/* Combine bottom info seamlessly */}
+
             <div className="game-bottom">
               <div className="game-song-info">
                 <span className="game-song-name">{songName}</span>
@@ -478,12 +367,10 @@ export default function GamePage() {
               </div>
               <div className="game-mini-stats">
                 <div className="mini-stat"><span className="mini-stat-val">{hitsVal}</span><span className="mini-stat-label">{t('mini-hits')}</span></div>
-                <div className="mini-stat"><span className="mini-stat-val">{missesVal}</span><span className="mini-stat-label">{t('mini-misses')}</span></div>
-                <div className="mini-stat"><span className="mini-stat-val">{notesLeft}</span><span className="mini-stat-label">{t('mini-left')}</span></div>
               </div>
             </div>
-          </div>
 
+          </div>
           {/* Pause overlay */}
           {paused && (
             <div className="pause-overlay">
