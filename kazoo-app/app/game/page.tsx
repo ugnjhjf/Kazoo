@@ -312,21 +312,20 @@ export default function GamePage() {
               </div>
             </div>
 
-            {/* Stats row: stability + combo + hz */}
-            <div className="game-stats-row">
-              <div className="step-progress-container">
-                <div className="step-progress-bar">
-                  <div className="step-progress-fill" style={{ width: `${stepProgressPct}%` }} />
-                </div>
-                <span className="step-progress-label">音符进度</span>
+          </div>
+          
+          {/* Stats row: stability + combo + hz — Now acting as a separator */}
+          <div className="game-stats-row">
+            <div className="step-progress-container">
+              <div className="step-progress-bar">
+                <div className="step-progress-fill" style={{ width: `${stepProgressPct}%` }} />
               </div>
-              <div className="game-hz-display">
-                <span className="hz-display">{hzDisplay}</span>
-                <span className="hz-label">{t('hz')}</span>
-              </div>
+              <span className="step-progress-label">音符进度</span>
             </div>
-
-            
+            <div className="game-hz-display">
+              <span className="hz-display">{hzDisplay}</span>
+              <span className="hz-label">{t('hz')}</span>
+            </div>
           </div>
 
           {/* ── Grid Walking – now shows pre-specified pitches ── */}
