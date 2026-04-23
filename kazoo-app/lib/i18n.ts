@@ -83,12 +83,14 @@ export const translations = {
     'pause-time-lbl': 'Session time:',
     'btn-resume': '▶ Resume',
     'btn-quit': '✕ Quit Session',
+    'target-pitch-lbl': 'Target Note',
+    'current-pitch-lbl': 'Your Voice',
 
     // Results
     'res-acc-lbl': 'Accuracy',
     'res-stab-lbl': 'Stability',
     'res-time-lbl': 'Time Trained',
-    'res-notes-lbl': 'Notes Hit',
+    'res-notes-lbl': 'Steps',
     'btn-play-again': '🔄 Play Again',
     'btn-res-calendar': '📅 Calendar',
     'btn-res-home': '🏠 Home',
@@ -148,9 +150,7 @@ export const translations = {
     'wave-lbl': 'WAVE',
     'grid-journey': 'Character Journey',
     'grid-step': 'Step {current} / {total}',
-    'mini-hits': 'Hits',
-    'mini-misses': 'Misses',
-    'mini-left': 'Left',
+    'mini-hits': 'Steps',
 
     // Badges Metadata
     'badge-day1-name': 'First Step',
@@ -275,9 +275,7 @@ export const translations = {
     'thermo-lbl-stable': '平穩',
     'thermo-lbl-erratic': '不穩',
     'combo-lbl': '連擊',
-    'mini-hits': '命中',
-    'mini-misses': '未中',
-    'mini-left': '剩餘',
+    'mini-hits': '步数',
     'grid-journey': '角色旅程',
     'grid-step': '第 {current} 步 / 共 {total} 步',
     'wave-lbl': '波形',
@@ -285,12 +283,14 @@ export const translations = {
     'pause-time-lbl': '訓練時長：',
     'btn-resume': '▶ 繼續遊戲',
     'btn-quit': '✕ 結束訓練',
+    'target-pitch-lbl': '目標音符',
+    'current-pitch-lbl': '您的聲音',
 
     // Results
     'res-acc-lbl': '準確度',
     'res-stab-lbl': '穩定性',
     'res-time-lbl': '訓練時長',
-    'res-notes-lbl': '命中音符',
+    'res-notes-lbl': '步数',
     'btn-play-again': '🔄 再次訓練',
     'btn-res-calendar': '📅 日曆',
     'btn-res-home': '🏠 主頁',

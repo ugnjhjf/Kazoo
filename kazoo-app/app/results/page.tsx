@@ -44,27 +44,13 @@ export default function ResultsPage() {
 
           <div className="results-cards">
             <div className="result-card">
-              <div className="result-card-icon">🎯</div>
-              <div className="result-card-value">{accuracy}%</div>
-              <div className="result-card-label">{t('res-acc-lbl')}</div>
-              <div className="result-card-bar">
-                <div className="result-bar-fill" style={{ width: `${barWidth}%` }} />
-              </div>
-            </div>
-            <div className="result-card">
-              <div className="result-card-icon">🌡️</div>
-              <div className="result-card-value">{stability}%</div>
-              <div className="result-card-label">{t('res-stab-lbl')}</div>
-              <div className="result-bar-label">{stabilityLabel}</div>
-            </div>
-            <div className="result-card">
               <div className="result-card-icon">⏱</div>
               <div className="result-card-value">{formatTime(durationS)}</div>
               <div className="result-card-label">{t('res-time-lbl')}</div>
             </div>
             <div className="result-card">
-              <div className="result-card-icon">🎵</div>
-              <div className="result-card-value">{hits}/{total}</div>
+              <div className="result-card-icon">🚶</div>
+              <div className="result-card-value">{hits}</div>
               <div className="result-card-label">{t('res-notes-lbl')}</div>
             </div>
           </div>

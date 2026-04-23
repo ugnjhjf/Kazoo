@@ -297,9 +297,9 @@ const LANG = {
     'thermo-lbl-stable': '穩定',
     'thermo-lbl-erratic': '不穩',
     'combo-lbl': '連擊',
-    'mini-lbl-hits': '命中',
+    'mini-lbl-hits': '步数',
     'mini-lbl-misses': '失誤',
-    'mini-lbl-left': '剩餘',
+    
     'pause-title': '已暫停',
     'pause-time-lbl': '訓練時間：',
     'btn-resume': '▶ 繼續',
@@ -317,7 +317,7 @@ const LANG = {
     'res-acc-lbl': '準確率',
     'res-stab-lbl': '穩定性',
     'res-time-lbl': '訓練時長',
-    'res-notes-lbl': '命中音符',
+    'res-notes-lbl': '步数',
     'badge-unlock-h3': '🏆 解鎖徽章！',
     'btn-play-again': '🔄 再玩一次',
     'btn-res-calendar': '📅 行事曆',
@@ -487,8 +487,8 @@ const App = {
     misses: 0,
     totalTargetFrames: 0,
     hitFrames: 0,
-    combo: 0,
-    maxCombo: 0,
+    
+    
     pitchHistory: [],         // frequency values during this session for stability
     currentNote: null,        // note being targeted
     noteHoldFrames: 0,
@@ -775,8 +775,7 @@ function startGameLoop() {
   G.sessionPlaySeconds = 0;
   G.hits = 0;
   G.misses = 0;
-  G.combo = 0;
-  G.maxCombo = 0;
+  
   G.hitFrames = 0;
   G.totalTargetFrames = 0;
   G.pitchHistory = [];
@@ -807,7 +806,7 @@ function startGameLoop() {
   setText('game-misses', '0');
   setText('game-notes-left', G.notes.length);
   setText('game-accuracy-val', '--%');
-  setText('combo-count', '0');
+  
   setText('hz-display', '--');
 
   updateThermometer(0);
@@ -919,15 +918,14 @@ function gameFrame(timestamp) {
         if (isOnPitch(hz, note.pitch)) {
           note.hitFrames++;
           G.hitFrames++;
-          G.combo++;
-          if (G.combo > G.maxCombo) G.maxCombo = G.combo;
+          
           if (el) el.style.boxShadow = `0 0 20px var(--clr-accent)`;
         } else {
-          G.combo = 0;
+          
           if (el) el.style.boxShadow = '';
         }
 
-        setText('combo-count', G.combo);
+        
       }
 
       // Note has passed or expired
